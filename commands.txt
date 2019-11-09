@@ -1,0 +1,26 @@
+dotnet new sln
+dotnet new classlib -n Domain -f netcoreapp3.0
+dotnet new classlib -n Application -f netcoreapp3.0
+dotnet new classlib -n Persistence -f netcoreapp3.0
+dotnet new webapi -n API
+dotnet sln add Domain
+dotnet sln add Application
+dotnet sln add Persistence
+dotnet sln add API
+
+cd Application
+dotnet add reference ../Domain
+dotnet add reference ../Persistence
+cd ../API
+dotnet add reference ../Application
+cd ../Persistence
+dotnet add reference ../Domain
+cd ..
+
+........
+
+install packages to Persistence:
+	Microsoft.EntityFrameworkCore
+	Microsoft.EntityFrameworkCore.Sqlite
+	Microsoft.EntityFrameworkCore.Tools
+dotnet ef migrations add InitialCreate -p Persistence/ -s API/
