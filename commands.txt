@@ -24,3 +24,7 @@ install packages to Persistence:
 	Microsoft.EntityFrameworkCore.Sqlite
 	Microsoft.EntityFrameworkCore.Tools
 dotnet ef migrations add InitialCreate -p Persistence/ -s API/
+
+........
+
+npx create-react-app client --use-npm --typescript
