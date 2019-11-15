@@ -26,6 +26,7 @@ namespace API
                 {
                     var context = services.GetRequiredService<DataContext>();
                     context.Database.Migrate();
+                    DummyData.InsertData(context);
                 }
                 catch (Exception ex)
                 {
