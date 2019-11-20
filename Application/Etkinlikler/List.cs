@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application
+namespace Application.Etkinlikler
 {
     public class List
     {
