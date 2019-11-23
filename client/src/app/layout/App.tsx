@@ -1,18 +1,28 @@
-import React, { useState, useEffect, Fragment, SyntheticEvent } from "react";
+import React, {
+  useState,
+  useEffect,
+  Fragment,
+  SyntheticEvent,
+  useContext
+} from "react";
 import { Container } from "semantic-ui-react";
 import { IEtkinlik } from "../models/etkinlik";
 import { NavigationBar } from "../../features/navigation/NavigationBar";
 import { EtkinlikDashboard } from "../../features/etkinlikler/dashboard/EtkinlikDashboard";
 import agent from "../api/agent";
 import { LoadingIndicator } from "./LoadingIndicator";
+import EtkinlikStore from "../stores/EtkinlikStore";
+import { observer } from "mobx-react-lite";
 
 const App: React.FC = () => {
+  const etkinlikStore = useContext(EtkinlikStore);
+
   const [etkinlikler, setEtkinlikler] = useState<IEtkinlik[]>([]);
   const [seciliEtkinlik, setSeciliEtkinlik] = useState<IEtkinlik | null>(null);
   const [duzenleModu, setDuzenleModu] = useState(false);
   const [yukleniyor, setYukleniyor] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [target, setTarget] = useState('');
+  const [target, setTarget] = useState("");
 
   const handleSeciliEtkinlik = (id: string) => {
     setSeciliEtkinlik(etkinlikler.filter(etkinlik => etkinlik.id === id)[0]);
@@ -49,7 +59,10 @@ const App: React.FC = () => {
       .then(() => setSubmitting(false));
   };
 
-  const handleEtkinlikSil = (event: SyntheticEvent<HTMLButtonElement>, id: string) => {
+  const handleEtkinlikSil = (
+    event: SyntheticEvent<HTMLButtonElement>,
+    id: string
+  ) => {
     setSubmitting(true);
     setTarget(event.currentTarget.name);
     agent.Etkinlikler.sil(id)
@@ -60,19 +73,10 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    agent.Etkinlikler.list()
-      .then(response => {
-        let etkinlikler: IEtkinlik[] = [];
-        response.forEach(etkinlik => {
-          etkinlik.tarih = etkinlik.tarih.split(".")[0];
-          etkinlikler.push(etkinlik);
-        });
-        setEtkinlikler(etkinlikler);
-      })
-      .then(() => setYukleniyor(false));
-  }, []);
+    etkinlikStore.etkinlikleriYukle();
+  }, [etkinlikStore]);
 
-  if (yukleniyor)
+  if (etkinlikStore.yukleniyor)
     return <LoadingIndicator content="Etkinlikler yükleniyor..." />;
 
   return (
@@ -80,7 +84,7 @@ const App: React.FC = () => {
       <NavigationBar etkinlikOlusturmaFormu={handleEtkinlikOlusturmaFormu} />
       <Container style={{ marginTop: "7em" }}>
         <EtkinlikDashboard
-          etkinlikler={etkinlikler}
+          etkinlikler={etkinlikStore.etkinlikler}
           seciliEtkinlik={handleSeciliEtkinlik}
           secilenEtkinlik={seciliEtkinlik!}
           duzenleModu={duzenleModu}
@@ -97,4 +101,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default observer(App);

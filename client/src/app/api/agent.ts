@@ -19,7 +19,7 @@ const request = {
 };
 
 const Etkinlikler = {
-  list: (): Promise<IEtkinlik[]> => request.get(etkinliklerPath),
+  listele: (): Promise<IEtkinlik[]> => request.get(etkinliklerPath),
   detaylar: (id: string) => request.get(`${etkinliklerPath}/${id}`),
   olustur: (etkinlik: IEtkinlik) => request.post(etkinliklerPath, etkinlik),
   guncelle: (etkinlik: IEtkinlik) =>
