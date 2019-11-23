@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Etkinlikler;
@@ -18,8 +19,34 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Etkinlik>>> List(){
-            return await _mediator.Send(new List.Query());
+        public async Task<ActionResult<List<Etkinlik>>> Listele()
+        {
+            return await _mediator.Send(new Listele.Query());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Etkinlik>> Detaylar(Guid id)
+        {
+            return await _mediator.Send(new Detaylar.Query { Id = id });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Unit>> Olustur([FromBody]Olustur.Command command)
+        {
+            return await _mediator.Send(command);
+        }
+
+        [HttpPost("{id}")]
+        public async Task<ActionResult<Unit>> Duzenle(Guid id, [FromBody]Duzenle.Command command)
+        {
+            command.Id = id;
+            return await _mediator.Send(command);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Unit>> Sil(Guid id)
+        {
+            return await _mediator.Send(new Sil.Command { Id = id });
         }
     }
 }

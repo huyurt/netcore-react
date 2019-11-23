@@ -8,14 +8,13 @@ using Persistence;
 
 namespace Application.Etkinlikler
 {
-    public class List
+    public class Listele
     {
         public class Query : IRequest<List<Etkinlik>> { }
 
         public class Handler : IRequestHandler<Query, List<Etkinlik>>
         {
             private readonly DataContext _context;
-
             public Handler(DataContext context)
             {
                 _context = context;
