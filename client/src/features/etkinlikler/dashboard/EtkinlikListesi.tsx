@@ -1,17 +1,21 @@
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import { Item, Button, Label, Segment } from "semantic-ui-react";
 import { IEtkinlik } from "../../../app/models/etkinlik";
 
 interface IProps {
   etkinlikler: IEtkinlik[];
   seciliEtkinlik: (id: string) => void;
-  etkinlikSil: (id: string) => void;
+  etkinlikSil: (event: SyntheticEvent<HTMLButtonElement>, id: string) => void;
+  submitting: boolean;
+  target: string;
 }
 
 export const EtkinlikListesi: React.FC<IProps> = ({
   etkinlikler,
   seciliEtkinlik,
-  etkinlikSil
+  etkinlikSil,
+  submitting,
+  target
 }) => {
   return (
     <Segment clearing>
@@ -35,7 +39,9 @@ export const EtkinlikListesi: React.FC<IProps> = ({
                   color="blue"
                 />
                 <Button
-                  onClick={() => etkinlikSil(etkinlik.id)}
+                  name={etkinlik.id}
+                  loading={target === etkinlik.id && submitting}
+                  onClick={(e) => etkinlikSil(e, etkinlik.id)}
                   floated="right"
                   content="Sil"
                   color="red"

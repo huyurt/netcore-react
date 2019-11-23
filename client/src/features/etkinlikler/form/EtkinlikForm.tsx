@@ -8,13 +8,15 @@ interface IProps {
   etkinlik: IEtkinlik;
   etkinlikOlustur: (etkinlik: IEtkinlik) => void;
   etkinlikDuzenle: (etkinlik: IEtkinlik) => void;
+  submitting: boolean;
 }
 
 export const EtkinlikForm: React.FC<IProps> = ({
   setDuzenleModu,
   etkinlik: formuAyarlaState,
   etkinlikOlustur,
-  etkinlikDuzenle
+  etkinlikDuzenle,
+  submitting
 }) => {
   const formuAyarla = () => {
     if (formuAyarlaState) {
@@ -100,7 +102,13 @@ export const EtkinlikForm: React.FC<IProps> = ({
           type="button"
           content="İptal"
         />
-        <Button floated="right" positive type="submit" content="Gönder" />
+        <Button
+          loading={submitting}
+          floated="right"
+          positive
+          type="submit"
+          content="Gönder"
+        />
       </Form>
     </Segment>
   );

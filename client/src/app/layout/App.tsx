@@ -1,14 +1,18 @@
-import React, { useState, useEffect, Fragment } from "react";
-import axios from "axios";
+import React, { useState, useEffect, Fragment, SyntheticEvent } from "react";
 import { Container } from "semantic-ui-react";
 import { IEtkinlik } from "../models/etkinlik";
 import { NavigationBar } from "../../features/navigation/NavigationBar";
 import { EtkinlikDashboard } from "../../features/etkinlikler/dashboard/EtkinlikDashboard";
+import agent from "../api/agent";
+import { LoadingIndicator } from "./LoadingIndicator";
 
 const App: React.FC = () => {
   const [etkinlikler, setEtkinlikler] = useState<IEtkinlik[]>([]);
   const [seciliEtkinlik, setSeciliEtkinlik] = useState<IEtkinlik | null>(null);
   const [duzenleModu, setDuzenleModu] = useState(false);
+  const [yukleniyor, setYukleniyor] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [target, setTarget] = useState('');
 
   const handleSeciliEtkinlik = (id: string) => {
     setSeciliEtkinlik(etkinlikler.filter(etkinlik => etkinlik.id === id)[0]);
@@ -21,36 +25,55 @@ const App: React.FC = () => {
   };
 
   const handleEtkinlikOlustur = (etkinlik: IEtkinlik) => {
-    setEtkinlikler([...etkinlikler, etkinlik]);
-    setSeciliEtkinlik(etkinlik);
-    setDuzenleModu(false);
+    setSubmitting(true);
+    agent.Etkinlikler.olustur(etkinlik)
+      .then(() => {
+        setEtkinlikler([...etkinlikler, etkinlik]);
+        setSeciliEtkinlik(etkinlik);
+        setDuzenleModu(false);
+      })
+      .then(() => setSubmitting(false));
   };
 
   const handleEtkinlikDuzenle = (etkinlik: IEtkinlik) => {
-    setEtkinlikler([
-      ...etkinlikler.filter(_etkinlik => _etkinlik.id !== etkinlik.id),
-      etkinlik
-    ]);
-    setSeciliEtkinlik(etkinlik);
-    setDuzenleModu(false);
+    setSubmitting(true);
+    agent.Etkinlikler.guncelle(etkinlik)
+      .then(() => {
+        setEtkinlikler([
+          ...etkinlikler.filter(_etkinlik => _etkinlik.id !== etkinlik.id),
+          etkinlik
+        ]);
+        setSeciliEtkinlik(etkinlik);
+        setDuzenleModu(false);
+      })
+      .then(() => setSubmitting(false));
   };
 
-  const handleEtkinlikSil = (id: string) => {
-    setEtkinlikler([...etkinlikler.filter(etkinlik => etkinlik.id !== id)]);
+  const handleEtkinlikSil = (event: SyntheticEvent<HTMLButtonElement>, id: string) => {
+    setSubmitting(true);
+    setTarget(event.currentTarget.name);
+    agent.Etkinlikler.sil(id)
+      .then(() => {
+        setEtkinlikler([...etkinlikler.filter(etkinlik => etkinlik.id !== id)]);
+      })
+      .then(() => setSubmitting(false));
   };
 
   useEffect(() => {
-    axios
-      .get<IEtkinlik[]>("http://localhost:5000/api/etkinlikler")
+    agent.Etkinlikler.list()
       .then(response => {
         let etkinlikler: IEtkinlik[] = [];
-        response.data.forEach(etkinlik => {
+        response.forEach(etkinlik => {
           etkinlik.tarih = etkinlik.tarih.split(".")[0];
           etkinlikler.push(etkinlik);
         });
         setEtkinlikler(etkinlikler);
-      });
+      })
+      .then(() => setYukleniyor(false));
   }, []);
+
+  if (yukleniyor)
+    return <LoadingIndicator content="Etkinlikler yükleniyor..." />;
 
   return (
     <Fragment>
@@ -66,6 +89,8 @@ const App: React.FC = () => {
           etkinlikOlustur={handleEtkinlikOlustur}
           etkinlikDuzenle={handleEtkinlikDuzenle}
           etkinlikSil={handleEtkinlikSil}
+          submitting={submitting}
+          target={target}
         />
       </Container>
     </Fragment>

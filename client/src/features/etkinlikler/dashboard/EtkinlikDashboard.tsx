@@ -1,4 +1,4 @@
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import { Grid } from "semantic-ui-react";
 import { IEtkinlik } from "../../../app/models/etkinlik";
 import { EtkinlikListesi } from "./EtkinlikListesi";
@@ -14,7 +14,9 @@ interface IProps {
   setSecilenEtkinlik: (etkinlik: IEtkinlik | null) => void;
   etkinlikOlustur: (etkinlik: IEtkinlik) => void;
   etkinlikDuzenle: (etkinlik: IEtkinlik) => void;
-  etkinlikSil: (id: string) => void;
+  etkinlikSil: (e: SyntheticEvent<HTMLButtonElement>, id: string) => void;
+  submitting: boolean;
+  target: string;
 }
 
 export const EtkinlikDashboard: React.FC<IProps> = ({
@@ -26,7 +28,9 @@ export const EtkinlikDashboard: React.FC<IProps> = ({
   setSecilenEtkinlik,
   etkinlikOlustur,
   etkinlikDuzenle,
-  etkinlikSil
+  etkinlikSil,
+  submitting,
+  target
 }) => {
   return (
     <Grid>
@@ -35,6 +39,8 @@ export const EtkinlikDashboard: React.FC<IProps> = ({
           etkinlikler={etkinlikler}
           seciliEtkinlik={seciliEtkinlik}
           etkinlikSil={etkinlikSil}
+          submitting={submitting}
+          target={target}
         />
       </Grid.Column>
       <Grid.Column width={6}>
@@ -52,6 +58,7 @@ export const EtkinlikDashboard: React.FC<IProps> = ({
             etkinlik={secilenEtkinlik!}
             etkinlikOlustur={etkinlikOlustur}
             etkinlikDuzenle={etkinlikDuzenle}
+            submitting={submitting}
           />
         )}
       </Grid.Column>

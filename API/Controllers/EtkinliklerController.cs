@@ -36,7 +36,7 @@ namespace API.Controllers
             return await _mediator.Send(command);
         }
 
-        [HttpPost("{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<Unit>> Duzenle(Guid id, [FromBody]Duzenle.Command command)
         {
             command.Id = id;
