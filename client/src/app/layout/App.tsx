@@ -1,33 +1,37 @@
-import React, {
-  useEffect,
-  Fragment,
-  useContext
-} from "react";
+import React, { Fragment } from "react";
 import { Container } from "semantic-ui-react";
-import { LoadingIndicator } from "./LoadingIndicator";
-import EtkinlikStore from "../stores/EtkinlikStore";
 import { observer } from "mobx-react-lite";
 import EtkinlikDashboard from "../../features/etkinlikler/dashboard/EtkinlikDashboard";
 import NavigationBar from "../../features/navigation/NavigationBar";
+import { Route, withRouter, RouteComponentProps } from "react-router-dom";
+import AnaSayfa from "../../features/home/AnaSayfa";
+import EtkinlikForm from "../../features/etkinlikler/form/EtkinlikForm";
+import EtkinlikDetaylari from "../../features/etkinlikler/detaylar/EtkinlikDetaylari";
 
-const App: React.FC = () => {
-  const etkinlikStore = useContext(EtkinlikStore);
-
-  useEffect(() => {
-    etkinlikStore.etkinlikleriYukle();
-  }, [etkinlikStore]);
-
-  if (etkinlikStore.yukleniyorInit)
-    return <LoadingIndicator content="Etkinlikler yükleniyor..." />;
-
+const App: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <Fragment>
-      <NavigationBar />
-      <Container style={{ marginTop: "7em" }}>
-        <EtkinlikDashboard />
-      </Container>
+      <Route exact path="/" component={AnaSayfa} />
+      <Route
+        path={"/(.+)"}
+        render={() => (
+          <Fragment>
+            <NavigationBar />
+            <Container style={{ marginTop: "7em" }}>
+              <Route exact path="/" component={AnaSayfa} />
+              <Route exact path="/etkinlikler" component={EtkinlikDashboard} />
+              <Route path="/etkinlikler/:id" component={EtkinlikDetaylari} />
+              <Route
+                key={location.key}
+                path={["/etkinlikOlustur", "/manage/:id"]}
+                component={EtkinlikForm}
+              />
+            </Container>
+          </Fragment>
+        )}
+      />
     </Fragment>
   );
 };
 
-export default observer(App);
+export default withRouter(observer(App));

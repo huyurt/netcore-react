@@ -1,46 +1,44 @@
-import React, { useContext } from "react";
-import { Card, Image, Button } from "semantic-ui-react";
+import React, { useContext, useEffect } from "react";
+import { Card, Image, Button, Grid } from "semantic-ui-react";
 import EtkinlikStore from "../../../app/stores/EtkinlikStore";
 import { observer } from "mobx-react-lite";
+import { RouteComponentProps } from "react-router";
+import { LoadingIndicator } from "../../../app/layout/LoadingIndicator";
+import { Link } from "react-router-dom";
+import EtkinlikDetayiBaslik from "./EtkinlikDetayiBaslik";
+import EtkinlikDetayiBilgi from "./EtkinlikDetayiBilgi";
+import EtkinlikDetayiSohbet from "./EtkinlikDetayiSohbet";
+import EtkinlikDetayiSidebar from "./EtkinlikDetayiSidebar";
 
-const EtkinlikDetaylari: React.FC = () => {
+interface DetayParams {
+  id: string;
+}
+
+const EtkinlikDetaylari: React.FC<RouteComponentProps<DetayParams>> = ({
+  match,
+  history
+}) => {
   const etkinlikStore = useContext(EtkinlikStore);
-  const {
-    secilenEtkinlik: etkinlik,
-    etkinlikDuzenleFormu,
-    seciliEtkinlikIptal
-  } = etkinlikStore;
+  const { etkinlik, etkinlikYukle, yukleniyorInit } = etkinlikStore;
+
+  useEffect(() => {
+    etkinlikYukle(match.params.id);
+  }, [etkinlikYukle, match.params.id]);
+
+  if (yukleniyorInit || !etkinlik)
+    return <LoadingIndicator content="Etkinlik yükleniyor..." />;
+
   return (
-    <Card fluid>
-      <Image
-        src={`./assets/categoryImages/${etkinlik!.kategori}.jpg`}
-        wrapped
-        ui={false}
-      />
-      <Card.Content>
-        <Card.Header>{etkinlik!.baslik}</Card.Header>
-        <Card.Meta>
-          <span>{etkinlik!.tarih}</span>
-        </Card.Meta>
-        <Card.Description>{etkinlik!.aciklama}</Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <Button.Group widths={2}>
-          <Button
-            onClick={() => etkinlikDuzenleFormu(etkinlik!.id)}
-            basic
-            color="blue"
-            content="Düzenle"
-          />
-          <Button
-            onClick={seciliEtkinlikIptal}
-            basic
-            color="grey"
-            content="İptal"
-          />
-        </Button.Group>
-      </Card.Content>
-    </Card>
+    <Grid>
+      <Grid.Column width={10}>
+        <EtkinlikDetayiBaslik etkinlik={etkinlik} />
+        <EtkinlikDetayiBilgi etkinlik={etkinlik} />
+        <EtkinlikDetayiSohbet />
+      </Grid.Column>
+      <Grid.Column width={6}>
+        <EtkinlikDetayiSidebar />
+      </Grid.Column>
+    </Grid>
   );
 };
 

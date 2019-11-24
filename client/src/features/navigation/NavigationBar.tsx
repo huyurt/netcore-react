@@ -1,25 +1,25 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Menu, Container, Button } from "semantic-ui-react";
-import EtkinlikStore from "../../app/stores/EtkinlikStore";
 import { observer } from "mobx-react-lite";
+import { NavLink } from "react-router-dom";
 
 const NavigationBar: React.FC = () => {
-  const etkinlikStore = useContext(EtkinlikStore);
   return (
     <Menu fixed="top" inverted>
       <Container>
-        <Menu.Item>
+        <Menu.Item header as={NavLink} exact to="/">
           <img
             src="./assets/logo.png"
             alt="logo"
             style={{ marginRight: "10px" }}
           />
-          Uygulama
+          Ana Sayfa
         </Menu.Item>
-        <Menu.Item name="Etkinlikler" />
+        <Menu.Item name="Etkinlikler" as={NavLink} to="/etkinlikler" />
         <Menu.Item>
           <Button
-            onClick={etkinlikStore.etkinlikOlusturmaFormu}
+            as={NavLink}
+            to="/etkinlikOlustur"
             positive
             content="Etkinlik Oluştur"
           />

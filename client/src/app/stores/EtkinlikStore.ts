@@ -2,22 +2,34 @@ import { createContext, SyntheticEvent } from "react";
 import { observable, action, computed, configure, runInAction } from "mobx";
 import { IEtkinlik } from "../models/etkinlik";
 import agent from "../api/agent";
-import { async } from "q";
 
 configure({ enforceActions: "always" });
 
 class EtkinlikStore {
   @observable etkinlikRegistry = new Map();
-  @observable etkinlikler: IEtkinlik[] = [];
-  @observable secilenEtkinlik: IEtkinlik | undefined;
+  @observable etkinlik: IEtkinlik | null = null;
   @observable yukleniyorInit = false;
-  @observable duzenleModu = false;
   @observable submitting = false;
   @observable target = "";
 
   @computed get etkinliklerTariheGoreSirali() {
-    return Array.from(this.etkinlikRegistry.values()).sort(
+    return this.etkinlikleriTariheGoreGrupla(
+      Array.from(this.etkinlikRegistry.values())
+    );
+  }
+
+  etkinlikleriTariheGoreGrupla(etkinlikler: IEtkinlik[]) {
+    const siralanmisEtkinlikler = etkinlikler.sort(
       (x, y) => Date.parse(x.tarih) - Date.parse(y.tarih)
+    );
+    return Object.entries(
+      siralanmisEtkinlikler.reduce((etkinlikler, etkinlik) => {
+        const tarih = etkinlik.tarih.split("T")[0];
+        etkinlikler[tarih] = etkinlikler[tarih]
+          ? [...etkinlikler[tarih], etkinlik]
+          : [etkinlik];
+        return etkinlikler;
+      }, {} as { [key: string]: IEtkinlik[] })
     );
   }
 
@@ -40,13 +52,41 @@ class EtkinlikStore {
     }
   };
 
+  @action etkinlikYukle = async (id: string) => {
+    let etkinlik = this.getEtkinlik(id);
+    if (etkinlik) {
+      this.etkinlik = etkinlik;
+    } else {
+      this.yukleniyorInit = true;
+      try {
+        etkinlik = await agent.Etkinlikler.detaylar(id);
+        runInAction("etkinlik getirildi", () => {
+          this.etkinlik = etkinlik;
+          this.yukleniyorInit = false;
+        });
+      } catch (error) {
+        runInAction("etkinlik getirildi", () => {
+          this.yukleniyorInit = false;
+        });
+        console.log(error);
+      }
+    }
+  };
+
+  @action etkinlikTemizle = () => {
+    this.etkinlik = null;
+  };
+
+  getEtkinlik = (id: string) => {
+    return this.etkinlikRegistry.get(id);
+  };
+
   @action etkinlikOlustur = async (etkinlik: IEtkinlik) => {
     this.submitting = true;
     try {
       await agent.Etkinlikler.olustur(etkinlik);
       runInAction("etkinlik oluşturuldu", () => {
         this.etkinlikRegistry.set(etkinlik.id, etkinlik);
-        this.duzenleModu = false;
         this.submitting = false;
       });
     } catch (error) {
@@ -63,8 +103,7 @@ class EtkinlikStore {
       await agent.Etkinlikler.guncelle(etkinlik);
       runInAction("etkinlik güncellendi", () => {
         this.etkinlikRegistry.set(etkinlik.id, etkinlik);
-        this.secilenEtkinlik = etkinlik;
-        this.duzenleModu = false;
+        this.etkinlik = etkinlik;
         this.submitting = false;
       });
     } catch (error) {
@@ -98,26 +137,19 @@ class EtkinlikStore {
   };
 
   @action etkinlikOlusturmaFormu = () => {
-    this.duzenleModu = true;
-    this.secilenEtkinlik = undefined;
+    this.etkinlik = null;
   };
 
   @action etkinlikDuzenleFormu = (id: string) => {
-    this.secilenEtkinlik = this.etkinlikRegistry.get(id);
-    this.duzenleModu = true;
+    this.etkinlik = this.etkinlikRegistry.get(id);
   };
 
   @action seciliEtkinlikIptal = () => {
-    this.secilenEtkinlik = undefined;
-  };
-
-  @action etkinlikIptalFormu = () => {
-    this.duzenleModu = false;
+    this.etkinlik = null;
   };
 
   @action seciliEtkinlik = (id: string) => {
-    this.secilenEtkinlik = this.etkinlikRegistry.get(id);
-    this.duzenleModu = false;
+    this.etkinlik = this.etkinlikRegistry.get(id);
   };
 }
 

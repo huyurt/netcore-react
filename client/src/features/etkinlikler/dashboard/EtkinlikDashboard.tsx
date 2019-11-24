@@ -1,27 +1,27 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Grid } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import EtkinlikListesi from "./EtkinlikListesi";
+import { LoadingIndicator } from "../../../app/layout/LoadingIndicator";
 import EtkinlikStore from "../../../app/stores/EtkinlikStore";
-import EtkinlikDetaylari from "../detaylar/EtkinlikDetaylari";
-import EtkinlikForm from "../form/EtkinlikForm";
 
 const EtkinlikDashboard: React.FC = () => {
   const etkinlikStore = useContext(EtkinlikStore);
-  const { duzenleModu, secilenEtkinlik } = etkinlikStore;
+
+  useEffect(() => {
+    etkinlikStore.etkinlikleriYukle();
+  }, [etkinlikStore]);
+
+  if (etkinlikStore.yukleniyorInit)
+    return <LoadingIndicator content="Etkinlikler yükleniyor..." />;
+
   return (
     <Grid>
       <Grid.Column width={10}>
         <EtkinlikListesi />
       </Grid.Column>
       <Grid.Column width={6}>
-        {secilenEtkinlik && !duzenleModu && <EtkinlikDetaylari />}
-        {duzenleModu && (
-          <EtkinlikForm
-            key={(secilenEtkinlik && secilenEtkinlik.id) || 0}
-            etkinlik={secilenEtkinlik!}
-          />
-        )}
+        <h2>Etkinlik Filtrele</h2>
       </Grid.Column>
     </Grid>
   );
