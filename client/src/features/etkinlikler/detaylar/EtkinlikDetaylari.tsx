@@ -1,42 +1,39 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Card, Image, Button } from "semantic-ui-react";
-import { IEtkinlik } from "../../../app/models/etkinlik";
+import EtkinlikStore from "../../../app/stores/EtkinlikStore";
+import { observer } from "mobx-react-lite";
 
-interface IProps {
-  etkinlik: IEtkinlik;
-  setDuzenleModu: (duzenleModu: boolean) => void;
-  setSecilenEtkinlik: (etkinlik: IEtkinlik | null) => void;
-}
-
-export const EtkinlikDetaylari: React.FC<IProps> = ({
-  etkinlik,
-  setDuzenleModu,
-  setSecilenEtkinlik
-}) => {
+const EtkinlikDetaylari: React.FC = () => {
+  const etkinlikStore = useContext(EtkinlikStore);
+  const {
+    secilenEtkinlik: etkinlik,
+    etkinlikDuzenleFormu,
+    seciliEtkinlikIptal
+  } = etkinlikStore;
   return (
     <Card fluid>
       <Image
-        src={`./assets/categoryImages/${etkinlik.kategori}.jpg`}
+        src={`./assets/categoryImages/${etkinlik!.kategori}.jpg`}
         wrapped
         ui={false}
       />
       <Card.Content>
-        <Card.Header>{etkinlik.baslik}</Card.Header>
+        <Card.Header>{etkinlik!.baslik}</Card.Header>
         <Card.Meta>
-          <span>{etkinlik.tarih}</span>
+          <span>{etkinlik!.tarih}</span>
         </Card.Meta>
-        <Card.Description>{etkinlik.aciklama}</Card.Description>
+        <Card.Description>{etkinlik!.aciklama}</Card.Description>
       </Card.Content>
       <Card.Content extra>
         <Button.Group widths={2}>
           <Button
-            onClick={() => setDuzenleModu(true)}
+            onClick={() => etkinlikDuzenleFormu(etkinlik!.id)}
             basic
             color="blue"
             content="Düzenle"
           />
           <Button
-            onClick={() => setSecilenEtkinlik(null)}
+            onClick={seciliEtkinlikIptal}
             basic
             color="grey"
             content="İptal"
@@ -46,3 +43,5 @@ export const EtkinlikDetaylari: React.FC<IProps> = ({
     </Card>
   );
 };
+
+export default observer(EtkinlikDetaylari);

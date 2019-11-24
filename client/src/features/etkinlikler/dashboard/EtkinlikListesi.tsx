@@ -1,26 +1,15 @@
-import React, { SyntheticEvent } from "react";
+import React, { useContext } from "react";
 import { Item, Button, Label, Segment } from "semantic-ui-react";
-import { IEtkinlik } from "../../../app/models/etkinlik";
+import { observer } from "mobx-react-lite";
+import EtkinlikStore from "../../../app/stores/EtkinlikStore";
 
-interface IProps {
-  etkinlikler: IEtkinlik[];
-  seciliEtkinlik: (id: string) => void;
-  etkinlikSil: (event: SyntheticEvent<HTMLButtonElement>, id: string) => void;
-  submitting: boolean;
-  target: string;
-}
-
-export const EtkinlikListesi: React.FC<IProps> = ({
-  etkinlikler,
-  seciliEtkinlik,
-  etkinlikSil,
-  submitting,
-  target
-}) => {
+const EtkinlikListesi: React.FC = () => {
+  const etkinlikStore = useContext(EtkinlikStore);
+  const { etkinliklerTariheGoreSirali, seciliEtkinlik, etkinlikSil, submitting, target } = etkinlikStore;
   return (
     <Segment clearing>
       <Item.Group divided>
-        {etkinlikler.map(etkinlik => (
+        {etkinliklerTariheGoreSirali.map(etkinlik => (
           <Item key={etkinlik.id}>
             <Item.Content>
               <Item.Header as="a">{etkinlik.baslik}</Item.Header>
@@ -41,7 +30,7 @@ export const EtkinlikListesi: React.FC<IProps> = ({
                 <Button
                   name={etkinlik.id}
                   loading={target === etkinlik.id && submitting}
-                  onClick={(e) => etkinlikSil(e, etkinlik.id)}
+                  onClick={e => etkinlikSil(e, etkinlik.id)}
                   floated="right"
                   content="Sil"
                   color="red"
@@ -55,3 +44,5 @@ export const EtkinlikListesi: React.FC<IProps> = ({
     </Segment>
   );
 };
+
+export default observer(EtkinlikListesi);

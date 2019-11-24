@@ -1,26 +1,26 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useContext } from "react";
 import { Segment, Form, Button } from "semantic-ui-react";
 import { IEtkinlik } from "../../../app/models/etkinlik";
 import { v4 as uuid } from "uuid";
+import EtkinlikStore from "../../../app/stores/EtkinlikStore";
+import { observer } from "mobx-react-lite";
 
 interface IProps {
-  setDuzenleModu: (duzenleModu: boolean) => void;
   etkinlik: IEtkinlik;
-  etkinlikOlustur: (etkinlik: IEtkinlik) => void;
-  etkinlikDuzenle: (etkinlik: IEtkinlik) => void;
-  submitting: boolean;
 }
 
-export const EtkinlikForm: React.FC<IProps> = ({
-  setDuzenleModu,
-  etkinlik: formuAyarlaState,
-  etkinlikOlustur,
-  etkinlikDuzenle,
-  submitting
-}) => {
-  const formuAyarla = () => {
-    if (formuAyarlaState) {
-      return formuAyarlaState;
+const EtkinlikForm: React.FC<IProps> = ({ etkinlik: formuAyarla }) => {
+  const etkinlikStore = useContext(EtkinlikStore);
+  const {
+    etkinlikOlustur,
+    etkinlikDuzenle,
+    submitting,
+    etkinlikIptalFormu
+  } = etkinlikStore;
+
+  const formAyarla = () => {
+    if (formuAyarla) {
+      return formuAyarla;
     } else {
       return {
         id: "",
@@ -34,7 +34,7 @@ export const EtkinlikForm: React.FC<IProps> = ({
     }
   };
 
-  const [etkinlik, setEtkinlik] = useState<IEtkinlik>(formuAyarla);
+  const [etkinlik, setEtkinlik] = useState<IEtkinlik>(formAyarla);
 
   const handleSubmit = () => {
     if (etkinlik.id.length === 0) {
@@ -97,7 +97,7 @@ export const EtkinlikForm: React.FC<IProps> = ({
           value={etkinlik.mekan}
         />
         <Button
-          onClick={() => setDuzenleModu(false)}
+          onClick={etkinlikIptalFormu}
           floated="right"
           type="button"
           content="İptal"
@@ -113,3 +113,5 @@ export const EtkinlikForm: React.FC<IProps> = ({
     </Segment>
   );
 };
+
+export default observer(EtkinlikForm);

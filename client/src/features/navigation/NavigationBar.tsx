@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Menu, Container, Button } from "semantic-ui-react";
+import EtkinlikStore from "../../app/stores/EtkinlikStore";
+import { observer } from "mobx-react-lite";
 
-interface IProps {
-  etkinlikOlusturmaFormu: () => void;
-}
-
-export const NavigationBar: React.FC<IProps> = ({ etkinlikOlusturmaFormu }) => {
+const NavigationBar: React.FC = () => {
+  const etkinlikStore = useContext(EtkinlikStore);
   return (
     <Menu fixed="top" inverted>
       <Container>
@@ -20,7 +19,7 @@ export const NavigationBar: React.FC<IProps> = ({ etkinlikOlusturmaFormu }) => {
         <Menu.Item name="Etkinlikler" />
         <Menu.Item>
           <Button
-            onClick={etkinlikOlusturmaFormu}
+            onClick={etkinlikStore.etkinlikOlusturmaFormu}
             positive
             content="Etkinlik Oluştur"
           />
@@ -29,3 +28,5 @@ export const NavigationBar: React.FC<IProps> = ({ etkinlikOlusturmaFormu }) => {
     </Menu>
   );
 };
+
+export default observer(NavigationBar);
