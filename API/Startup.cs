@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Persistence;
 using MediatR;
 using Application.Etkinlikler;
+using FluentValidation.AspNetCore;
 
 namespace API
 {
@@ -34,7 +35,8 @@ namespace API
                 });
             });
             services.AddMediatR(typeof(Listele.Query).Assembly);
-            services.AddControllers();
+            services.AddControllers()
+            .AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<Olustur>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
