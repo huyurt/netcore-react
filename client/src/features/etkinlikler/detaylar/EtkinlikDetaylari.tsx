@@ -23,10 +23,12 @@ const EtkinlikDetaylari: React.FC<RouteComponentProps<DetayParams>> = ({
 
   useEffect(() => {
     etkinlikYukle(match.params.id);
-  }, [etkinlikYukle, match.params.id]);
+  }, [etkinlikYukle, match.params.id, history]);
 
   if (yukleniyorInit || !etkinlik)
     return <LoadingIndicator content="Etkinlik yükleniyor..." />;
+
+  if (!etkinlik) return <h2>Etkinlik bulunamadı</h2>;
 
   return (
     <Grid>

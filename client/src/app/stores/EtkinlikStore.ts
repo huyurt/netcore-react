@@ -48,7 +48,6 @@ class EtkinlikStore {
       runInAction("etkinlikleri yükle hatası", () => {
         this.yukleniyorInit = false;
       });
-      console.log(error);
     }
   };
 

@@ -1,6 +1,8 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Errors;
 using FluentValidation;
 using MediatR;
 using Persistence;
@@ -46,7 +48,7 @@ namespace Application.Etkinlikler
                 var etkinlik = await _context.Etkinlikler.FindAsync(request.Id);
 
                 if (etkinlik == null)
-                    throw new Exception("Etkinlik bulunamadı.");
+                    throw new RestException(HttpStatusCode.NotFound, new { etkinlik = "Bulunamadı" });
 
                 etkinlik.Baslik = request.Baslik ?? etkinlik.Baslik;
                 etkinlik.Aciklama = request.Aciklama ?? etkinlik.Aciklama;
