@@ -1,9 +1,12 @@
-import React from "react";
-import { Menu, Container, Button } from "semantic-ui-react";
+import React, { useContext } from "react";
+import { Menu, Container, Button, Dropdown, Image } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
+import { RootStoreContext } from "../../app/stores/rootStore";
 
 const NavigationBar: React.FC = () => {
+  const rootStore = useContext(RootStoreContext);
+  const { kullanici, logout } = rootStore.kullaniciStore;
   return (
     <Menu fixed="top" inverted>
       <Container>
@@ -24,6 +27,26 @@ const NavigationBar: React.FC = () => {
             content="Etkinlik Oluştur"
           />
         </Menu.Item>
+        {kullanici && (
+          <Menu.Item position="right">
+            <Image
+              avatar
+              spaced="right"
+              src={kullanici.image || "/assets/user.png"}
+            />
+            <Dropdown pointing="top left" text="user">
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  as={Link}
+                  to={`/profile/username`}
+                  text="My profile"
+                  icon="user"
+                />
+                <Dropdown.Item onClick={logout} text="Logout" icon="power" />
+              </Dropdown.Menu>
+            </Dropdown>
+          </Menu.Item>
+        )}
       </Container>
     </Menu>
   );

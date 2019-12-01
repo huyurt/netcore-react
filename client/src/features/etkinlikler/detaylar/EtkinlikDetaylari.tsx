@@ -1,14 +1,13 @@
 import React, { useContext, useEffect } from "react";
-import { Card, Image, Button, Grid } from "semantic-ui-react";
-import EtkinlikStore from "../../../app/stores/EtkinlikStore";
+import { Grid } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router";
 import { LoadingIndicator } from "../../../app/layout/LoadingIndicator";
-import { Link } from "react-router-dom";
 import EtkinlikDetayiBaslik from "./EtkinlikDetayiBaslik";
 import EtkinlikDetayiBilgi from "./EtkinlikDetayiBilgi";
 import EtkinlikDetayiSohbet from "./EtkinlikDetayiSohbet";
 import EtkinlikDetayiSidebar from "./EtkinlikDetayiSidebar";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 interface DetayParams {
   id: string;
@@ -18,8 +17,8 @@ const EtkinlikDetaylari: React.FC<RouteComponentProps<DetayParams>> = ({
   match,
   history
 }) => {
-  const etkinlikStore = useContext(EtkinlikStore);
-  const { etkinlik, etkinlikYukle, yukleniyorInit } = etkinlikStore;
+  const rootStore = useContext(RootStoreContext);
+  const { etkinlik, etkinlikYukle, yukleniyorInit } = rootStore.etkinlikStore;
 
   useEffect(() => {
     etkinlikYukle(match.params.id);

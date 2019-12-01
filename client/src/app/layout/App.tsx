@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useContext, useEffect } from "react";
 import { Container } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import EtkinlikDashboard from "../../features/etkinlikler/dashboard/EtkinlikDashboard";
@@ -14,11 +14,28 @@ import EtkinlikForm from "../../features/etkinlikler/form/EtkinlikForm";
 import EtkinlikDetaylari from "../../features/etkinlikler/detaylar/EtkinlikDetaylari";
 import NotFound from "./NotFound";
 import { ToastContainer } from "react-toastify";
+import LoginForm from "../../features/kullanici/LoginForm";
+import { RootStoreContext } from "../stores/rootStore";
+import { LoadingIndicator } from "./LoadingIndicator";
 
 const App: React.FC<RouteComponentProps> = ({ location }) => {
+  const rootStore = useContext(RootStoreContext);
+  const { setAppLoaded, token, appLoaded } = rootStore.commonStore;
+  const { getUser } = rootStore.kullaniciStore;
+
+  useEffect(() => {
+    if (token) {
+      getUser().finally(() => setAppLoaded());
+    } else {
+      setAppLoaded();
+    }
+  }, [getUser, setAppLoaded, token]);
+
+  if (!appLoaded) return <LoadingIndicator content="Uygulama yükleniyor..." />;
+
   return (
     <Fragment>
-      <ToastContainer position='bottom-right' />
+      <ToastContainer position="bottom-right" />
       <Route exact path="/" component={AnaSayfa} />
       <Route
         path={"/(.+)"}
@@ -39,6 +56,7 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
                   path={["/etkinlikOlustur", "/manage/:id"]}
                   component={EtkinlikForm}
                 />
+                <Route path="/giris" component={LoginForm} />
                 <Route component={NotFound} />
               </Switch>
             </Container>

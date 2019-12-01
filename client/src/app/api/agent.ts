@@ -2,8 +2,19 @@ import axios, { AxiosResponse } from "axios";
 import { IEtkinlik } from "../models/etkinlik";
 import { history } from "../..";
 import { toast } from "react-toastify";
+import { IKullanici, IKullaniciFormValues } from "../models/kullanici";
 
 axios.defaults.baseURL = "http://localhost:5000";
+axios.interceptors.request.use(
+  config => {
+    const token = window.localStorage.getItem("jwt");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
 axios.interceptors.response.use(undefined, error => {
   if (error.message === "Network Error" && !error.response) {
     toast.error("Bağlantı hatası");
@@ -22,7 +33,7 @@ axios.interceptors.response.use(undefined, error => {
   if (status === 500) {
     toast.error("Sunucu hatası");
   }
-  throw error;
+  throw error.response;
 });
 
 const etkinliklerPath = "/api/etkinlikler";
@@ -66,4 +77,12 @@ const Etkinlikler = {
   sil: (id: string) => request.del(`${etkinliklerPath}/${id}`)
 };
 
-export default { Etkinlikler };
+const Kullanici = {
+  current: (): Promise<IKullanici> => request.get("/kullanici"),
+  login: (kullanici: IKullaniciFormValues): Promise<IKullanici> =>
+    request.post(`kullanici/giris`, kullanici),
+  kayit: (kullanici: IKullaniciFormValues): Promise<IKullanici> =>
+    request.post(`kullanici/kayit`, kullanici)
+};
+
+export default { Etkinlikler, Kullanici };

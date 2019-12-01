@@ -3,16 +3,17 @@ import { Grid } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import EtkinlikListesi from "./EtkinlikListesi";
 import { LoadingIndicator } from "../../../app/layout/LoadingIndicator";
-import EtkinlikStore from "../../../app/stores/EtkinlikStore";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const EtkinlikDashboard: React.FC = () => {
-  const etkinlikStore = useContext(EtkinlikStore);
+  const rootStore = useContext(RootStoreContext);
+  const { etkinlikleriYukle, yukleniyorInit } = rootStore.etkinlikStore;
 
   useEffect(() => {
-    etkinlikStore.etkinlikleriYukle();
-  }, [etkinlikStore]);
+    etkinlikleriYukle();
+  }, [etkinlikleriYukle]);
 
-  if (etkinlikStore.yukleniyorInit)
+  if (yukleniyorInit)
     return <LoadingIndicator content="Etkinlikler yükleniyor..." />;
 
   return (

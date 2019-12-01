@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from "react";
 import { Segment, Form, Button, Grid } from "semantic-ui-react";
 import { EtkinlikFormValues } from "../../../app/models/etkinlik";
 import { v4 as uuid } from "uuid";
-import EtkinlikStore from "../../../app/stores/EtkinlikStore";
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router";
 import { Form as FinalForm, Field } from "react-final-form";
@@ -18,6 +17,7 @@ import {
   composeValidators,
   hasLengthGreaterThan
 } from "revalidate";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const validate = combineValidators({
   baslik: isRequired({ message: "Başlık giriniz." }),
@@ -40,13 +40,13 @@ const EtkinlikForm: React.FC<RouteComponentProps<DetayParams>> = ({
   match,
   history
 }) => {
-  const etkinlikStore = useContext(EtkinlikStore);
+  const rootStore = useContext(RootStoreContext);
   const {
     etkinlikOlustur,
     etkinlikDuzenle,
     submitting,
     etkinlikYukle
-  } = etkinlikStore;
+  } = rootStore.etkinlikStore;
 
   const [etkinlik, setEtkinlik] = useState(new EtkinlikFormValues());
   const [yukleniyor, setYukleniyor] = useState(false);

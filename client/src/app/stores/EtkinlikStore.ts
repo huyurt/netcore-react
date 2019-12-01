@@ -1,13 +1,17 @@
-import { createContext, SyntheticEvent } from "react";
-import { observable, action, computed, configure, runInAction } from "mobx";
+import { SyntheticEvent } from "react";
+import { observable, action, computed, runInAction } from "mobx";
 import { IEtkinlik } from "../models/etkinlik";
 import agent from "../api/agent";
 import { history } from "../..";
 import { toast } from "react-toastify";
+import { RootStore } from "./rootStore";
 
-configure({ enforceActions: "always" });
+export default class EtkinlikStore {
+  rootStore: RootStore;
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+  }
 
-class EtkinlikStore {
   @observable etkinlikRegistry = new Map();
   @observable etkinlik: IEtkinlik | null = null;
   @observable yukleniyorInit = false;
@@ -159,5 +163,3 @@ class EtkinlikStore {
     this.etkinlik = this.etkinlikRegistry.get(id);
   };
 }
-
-export default createContext(new EtkinlikStore());

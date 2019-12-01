@@ -1,12 +1,12 @@
 import React, { useContext, Fragment } from "react";
 import { Item, Label } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
-import EtkinlikStore from "../../../app/stores/EtkinlikStore";
 import EtkinlikListesiItem from "./EtkinlikListesiItem";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const EtkinlikListesi: React.FC = () => {
-  const etkinlikStore = useContext(EtkinlikStore);
-  const { etkinliklerTariheGoreSirali } = etkinlikStore;
+  const rootStore = useContext(RootStoreContext);
+  const { etkinliklerTariheGoreSirali } = rootStore.etkinlikStore;
   return (
     <Fragment>
       {etkinliklerTariheGoreSirali.map(([grup, etkinlikler]) => (
