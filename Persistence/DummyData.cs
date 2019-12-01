@@ -1,14 +1,46 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace Persistence
 {
     public class DummyData
     {
-        public static void InsertData(DataContext context)
+        public static async Task InsertData(DataContext context, UserManager<AppUser> userManager)
         {
+            if (!userManager.Users.Any())
+            {
+                var users = new List<AppUser>
+                {
+                    new AppUser
+                    {
+                        DisplayName = "Hudayfe",
+                        UserName = "hudayfe",
+                        Email = "hudayfe@test.com"
+                    },
+                    new AppUser
+                    {
+                        DisplayName = "Ahmet",
+                        UserName = "ahmet",
+                        Email = "ahmet@test.com"
+                    },
+                    new AppUser
+                    {
+                        DisplayName = "Irmak",
+                        UserName = "irmak",
+                        Email = "irmak@test.com"
+                    }
+                };
+
+                foreach (var user in users)
+                {
+                    await userManager.CreateAsync(user, "Pa$$w0rd");
+                }
+            }
+
             if (!context.Etkinlikler.Any())
             {
                 var etkinlikler = new List<Etkinlik>

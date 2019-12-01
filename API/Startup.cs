@@ -9,6 +9,8 @@ using MediatR;
 using Application.Etkinlikler;
 using FluentValidation.AspNetCore;
 using API.Middleware;
+using Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace API
 {
@@ -38,6 +40,9 @@ namespace API
             services.AddMediatR(typeof(Listele.Query).Assembly);
             services.AddControllers()
             .AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<Olustur>());
+
+            services.AddDefaultIdentity<AppUser>()
+            .AddEntityFrameworkStores<DataContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

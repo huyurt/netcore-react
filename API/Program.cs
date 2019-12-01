@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 
 using Persistence;
+using Microsoft.AspNetCore.Identity;
+using Domain;
 
 namespace API
 {
@@ -21,8 +23,9 @@ namespace API
                 try
                 {
                     var context = services.GetRequiredService<DataContext>();
+                    var userManager = services.GetRequiredService<UserManager<AppUser>>();
                     context.Database.Migrate();
-                    DummyData.InsertData(context);
+                    DummyData.InsertData(context, userManager).Wait();
                 }
                 catch (Exception ex)
                 {
