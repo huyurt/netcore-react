@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Application.Etkinlikler;
 using Domain;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -17,6 +18,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Etkinlik>> Detaylar(Guid id)
         {
             return await Mediator.Send(new Detaylar.Query { Id = id });

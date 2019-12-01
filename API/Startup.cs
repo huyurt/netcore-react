@@ -10,7 +10,13 @@ using Application.Etkinlikler;
 using FluentValidation.AspNetCore;
 using API.Middleware;
 using Domain;
-using Microsoft.AspNetCore.Identity;
+using Application.Interfaces;
+using Infrastructure.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace API
 {
@@ -38,11 +44,29 @@ namespace API
                 });
             });
             services.AddMediatR(typeof(Listele.Query).Assembly);
-            services.AddControllers()
+            services.AddControllers(option =>
+            {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                option.Filters.Add(new AuthorizeFilter(policy));
+            })
             .AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<Olustur>());
 
             services.AddDefaultIdentity<AppUser>()
             .AddEntityFrameworkStores<DataContext>();
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(option =>
+            {
+                option.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateAudience = false,
+                    ValidateIssuer = false
+                };
+            });
+            services.AddScoped<IJwtGenerator, JwtGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +79,8 @@ namespace API
             }
 
             //app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseCors("CorsPolicy");
 
