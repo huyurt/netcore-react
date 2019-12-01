@@ -2,6 +2,8 @@ import { createContext, SyntheticEvent } from "react";
 import { observable, action, computed, configure, runInAction } from "mobx";
 import { IEtkinlik } from "../models/etkinlik";
 import agent from "../api/agent";
+import { history } from "../..";
+import { toast } from "react-toastify";
 
 configure({ enforceActions: "always" });
 
@@ -20,11 +22,11 @@ class EtkinlikStore {
 
   etkinlikleriTariheGoreGrupla(etkinlikler: IEtkinlik[]) {
     const siralanmisEtkinlikler = etkinlikler.sort(
-      (x, y) => Date.parse(x.tarih) - Date.parse(y.tarih)
+      (x, y) => x.tarih.getTime() - y.tarih.getTime()
     );
     return Object.entries(
       siralanmisEtkinlikler.reduce((etkinlikler, etkinlik) => {
-        const tarih = etkinlik.tarih.split("T")[0];
+        const tarih = etkinlik.tarih.toISOString().split("T")[0];
         etkinlikler[tarih] = etkinlikler[tarih]
           ? [...etkinlikler[tarih], etkinlik]
           : [etkinlik];
@@ -39,7 +41,7 @@ class EtkinlikStore {
       const etkinlikler = await agent.Etkinlikler.listele();
       runInAction("etkinlikler yüklendi", () => {
         etkinlikler.forEach(etkinlik => {
-          etkinlik.tarih = etkinlik.tarih.split(".")[0];
+          etkinlik.tarih = new Date(etkinlik.tarih);
           this.etkinlikRegistry.set(etkinlik.id, etkinlik);
         });
       });
@@ -55,14 +57,18 @@ class EtkinlikStore {
     let etkinlik = this.getEtkinlik(id);
     if (etkinlik) {
       this.etkinlik = etkinlik;
+      return etkinlik;
     } else {
       this.yukleniyorInit = true;
       try {
         etkinlik = await agent.Etkinlikler.detaylar(id);
         runInAction("etkinlik getirildi", () => {
+          etkinlik.tarih = new Date(etkinlik.tarih);
           this.etkinlik = etkinlik;
+          this.etkinlikRegistry.set(etkinlik.id, etkinlik);
           this.yukleniyorInit = false;
         });
+        return etkinlik;
       } catch (error) {
         runInAction("etkinlik getirildi", () => {
           this.yukleniyorInit = false;
@@ -88,11 +94,12 @@ class EtkinlikStore {
         this.etkinlikRegistry.set(etkinlik.id, etkinlik);
         this.submitting = false;
       });
+      history.push(`/etkinlikler/${etkinlik.id}`);
     } catch (error) {
       runInAction("etkinlik oluştur hatası", () => {
         this.submitting = false;
       });
-      console.log(error);
+      toast.error("Veri gönderilirken hata oluştu.");
     }
   };
 
@@ -105,11 +112,12 @@ class EtkinlikStore {
         this.etkinlik = etkinlik;
         this.submitting = false;
       });
+      history.push(`/etkinlikler/${etkinlik.id}`);
     } catch (error) {
       runInAction("etkinlik güncelle hatası", () => {
         this.submitting = false;
       });
-      console.log(error);
+      toast.error("Veri gönderilirken hata oluştu.");
     }
   };
 

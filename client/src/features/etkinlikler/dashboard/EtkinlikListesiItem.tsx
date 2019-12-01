@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import { Item, Button, Label, Segment, Icon } from "semantic-ui-react";
+import React from "react";
+import { Item, Button, Segment, Icon } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-import EtkinlikStore from "../../../app/stores/EtkinlikStore";
 import { IEtkinlik } from "../../../app/models/etkinlik";
+import { format } from "date-fns";
 
 const EtkinlikListesiItem: React.FC<{ etkinlik: IEtkinlik }> = ({
   etkinlik
@@ -22,7 +22,7 @@ const EtkinlikListesiItem: React.FC<{ etkinlik: IEtkinlik }> = ({
       </Segment>
       <Segment>
         <Icon name="clock" />
-        {etkinlik.tarih}
+        {format(etkinlik.tarih, "HH:mm")}
         <Icon name="marker" />
         {etkinlik.mekan}, {etkinlik.sehir}
       </Segment>

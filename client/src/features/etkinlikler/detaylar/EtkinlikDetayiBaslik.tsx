@@ -2,6 +2,9 @@ import React from "react";
 import { Segment, Item, Button, Image, Header } from "semantic-ui-react";
 import { IEtkinlik } from "../../../app/models/etkinlik";
 import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
+import {format} from 'date-fns';
+import { tr } from "date-fns/locale";
 
 const activityImageStyle = {
   filter: "brightness(30%)"
@@ -36,7 +39,7 @@ const EtkinlikDetayiBaslik: React.FC<{ etkinlik: IEtkinlik }> = ({
                   content={etkinlik.baslik}
                   style={{ color: "white" }}
                 />
-                <p>{etkinlik.tarih}</p>
+                <p>{format(etkinlik.tarih, "eeee dd MMMM", {locale: tr})}</p>
                 <p>
                   Hosted by <strong>Bob</strong>
                 </p>
@@ -48,7 +51,12 @@ const EtkinlikDetayiBaslik: React.FC<{ etkinlik: IEtkinlik }> = ({
       <Segment clearing attached="bottom">
         <Button color="teal">Join Activity</Button>
         <Button>Cancel attendance</Button>
-        <Button color="orange" floated="right">
+        <Button
+          as={Link}
+          to={`/manage/${etkinlik.id}`}
+          color="orange"
+          floated="right"
+        >
           Manage Event
         </Button>
       </Segment>

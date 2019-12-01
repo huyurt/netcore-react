@@ -22,6 +22,7 @@ axios.interceptors.response.use(undefined, error => {
   if (status === 500) {
     toast.error("Sunucu hatası");
   }
+  throw error;
 });
 
 const etkinliklerPath = "/api/etkinlikler";

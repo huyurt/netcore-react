@@ -1,6 +1,8 @@
 import React from "react";
 import { Segment, Grid, Icon } from "semantic-ui-react";
 import { IEtkinlik } from "../../../app/models/etkinlik";
+import { format } from "date-fns";
+import { tr } from "date-fns/locale";
 
 const EtkinlikDetayiBilgi: React.FC<{ etkinlik: IEtkinlik }> = ({
   etkinlik
@@ -23,7 +25,10 @@ const EtkinlikDetayiBilgi: React.FC<{ etkinlik: IEtkinlik }> = ({
             <Icon name="calendar" size="large" color="teal" />
           </Grid.Column>
           <Grid.Column width={15}>
-            <span>{etkinlik.tarih}</span>
+            <span>
+              {format(etkinlik.tarih, "eeee dd MMMM", {locale: tr})} -{" "}
+              {format(etkinlik.tarih, "HH:mm")}
+            </span>
           </Grid.Column>
         </Grid>
       </Segment>
