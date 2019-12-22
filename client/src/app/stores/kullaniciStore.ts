@@ -1,8 +1,9 @@
-import { observable, computed, action, runInAction } from "mobx";
+import { observable, computed, action, runInAction, values } from "mobx";
 import { IKullanici, IKullaniciFormValues } from "../models/kullanici";
 import agent from "../api/agent";
 import { RootStore } from "./rootStore";
 import { history } from "../..";
+import { ca } from "date-fns/locale";
 
 export default class KullaniciStore {
   rootStore: RootStore;
@@ -22,7 +23,19 @@ export default class KullaniciStore {
       runInAction(() => {
         this.kullanici = kullanici;
       });
-      this.rootStore.commonStore.setToken(kullanici.tokem);
+      this.rootStore.commonStore.setToken(kullanici.token);
+      this.rootStore.modalStore.closeModal();
+      history.push("/etkinlikler");
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  @action kayit = async (values: IKullaniciFormValues) => {
+    try {
+      const kullanici = await agent.Kullanici.kayit(values);
+      this.rootStore.commonStore.setToken(kullanici.token);
+      this.rootStore.modalStore.closeModal();
       history.push("/etkinlikler");
     } catch (error) {
       throw error;

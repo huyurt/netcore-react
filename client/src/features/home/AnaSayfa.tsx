@@ -2,10 +2,13 @@ import React, { useContext, Fragment } from "react";
 import { Container, Segment, Header, Button, Image } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { RootStoreContext } from "../../app/stores/rootStore";
+import LoginForm from "../kullanici/LoginForm";
+import KayitForm from "../kullanici/KayitForm";
 
 const AnaSayfa = () => {
   const rootStore = useContext(RootStoreContext);
   const { isLoggedIn, kullanici } = rootStore.kullaniciStore;
+  const { openModal } = rootStore.modalStore;
   return (
     <Segment inverted textAlign="center" vertical className="masthead">
       <Container text>
@@ -32,10 +35,18 @@ const AnaSayfa = () => {
         ) : (
           <Fragment>
             <Header as="h2" inverted content="Uygulamaya Hoş Geldiniz" />
-            <Button as={Link} to="/giris" size="huge" inverted>
+            <Button
+              onClick={() => openModal(<LoginForm />)}
+              size="huge"
+              inverted
+            >
               Giriş Yap
             </Button>
-            <Button as={Link} to="/kayit" size="huge" inverted>
+            <Button
+              onClick={() => openModal(<KayitForm />)}
+              size="huge"
+              inverted
+            >
               Kaydol
             </Button>
           </Fragment>

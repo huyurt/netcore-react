@@ -9,17 +9,19 @@ import { combineValidators, isRequired } from "revalidate";
 import ErrorMessage from "../../app/common/form/ErrorMessage";
 
 const validate = combineValidators({
+  userName: isRequired("Kullanıcı Adınız"),
+  displayName: isRequired("Adınız"),
   email: isRequired("Email"),
   sifre: isRequired("Şifre")
 });
 
-const LoginForm = () => {
+const KayitForm = () => {
   const rootStore = useContext(RootStoreContext);
-  const { login } = rootStore.kullaniciStore;
+  const { kayit } = rootStore.kullaniciStore;
   return (
     <FinalForm
       onSubmit={(values: IKullaniciFormValues) =>
-        login(values).catch(error => ({
+        kayit(values).catch(error => ({
           [FORM_ERROR]: error
         }))
       }
@@ -35,10 +37,16 @@ const LoginForm = () => {
         <Form onSubmit={handleSubmit} error>
           <Header
             as="h2"
-            content="Etkinliklere Giriş Yap"
+            content="Etkinliklere Kaydol"
             color="teal"
             textAlign="center"
           />
+          <Field
+            name="userName"
+            children={TextInput}
+            placeholder="Kullanıcı Adınız"
+          />
+          <Field name="displayName" children={TextInput} placeholder="Adınız" />
           <Field name="email" children={TextInput} placeholder="Email" />
           <Field
             name="sifre"
@@ -47,16 +55,13 @@ const LoginForm = () => {
             type="password"
           />
           {submitError && !dirtySinceLastSubmit && (
-            <ErrorMessage
-              error={submitError}
-              text="Hatalı email veya şifre"
-            />
+            <ErrorMessage error={submitError} />
           )}
           <Button
             disabled={(invalid && !dirtySinceLastSubmit) || pristine}
             loading={submitting}
             color="teal"
-            content="Giriş"
+            content="Kayıt Ol"
             fluid
           />
         </Form>
@@ -65,4 +70,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default KayitForm;

@@ -1,6 +1,6 @@
 export interface IKullanici {
   displayName: string;
-  tokem: string;
+  token: string;
   userName: string;
   image?: string;
 }
