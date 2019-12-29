@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,20 +11,24 @@ namespace Application.Etkinlikler
 {
     public class Listele
     {
-        public class Query : IRequest<List<Etkinlik>> { }
+        public class Query : IRequest<List<EtkinlikDto>> { }
 
-        public class Handler : IRequestHandler<Query, List<Etkinlik>>
+        public class Handler : IRequestHandler<Query, List<EtkinlikDto>>
         {
             private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly IMapper _mapper;
+            public Handler(DataContext context, IMapper mapper)
             {
+                _mapper = mapper;
                 _context = context;
             }
 
-            public async Task<List<Etkinlik>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<List<EtkinlikDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var etkinlikler = await _context.Etkinlikler.ToListAsync();
-                return etkinlikler;
+                var etkinlikler = await _context.Etkinlikler
+                    .ToListAsync();
+
+                return _mapper.Map<List<Etkinlik>, List<EtkinlikDto>>(etkinlikler);
             }
         }
     }

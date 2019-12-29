@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace Domain
+namespace Application.Etkinlikler
 {
-    public class Etkinlik
+    public class EtkinlikDto
     {
         public Guid Id { get; set; }
         public string Baslik { get; set; }
@@ -12,6 +13,8 @@ namespace Domain
         public DateTime Tarih { get; set; }
         public string Sehir { get; set; }
         public string Mekan { get; set; }
-        public virtual ICollection<KullaniciEtkinlik> KullaniciEtkinlikler { get; set; }
+
+        [JsonProperty("Katilimcilar")]
+        public ICollection<KatilimciDto> KullaniciEtkinlikler { get; set; }
     }
 }

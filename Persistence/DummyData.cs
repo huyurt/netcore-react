@@ -17,18 +17,21 @@ namespace Persistence
                 {
                     new AppUser
                     {
+                        Id = "a",
                         DisplayName = "Hudayfe",
                         UserName = "hudayfe",
                         Email = "hudayfe@test.com"
                     },
                     new AppUser
                     {
+                        Id = "b",
                         DisplayName = "Ahmet",
                         UserName = "ahmet",
                         Email = "ahmet@test.com"
                     },
                     new AppUser
                     {
+                        Id = "c",
                         DisplayName = "Irmak",
                         UserName = "irmak",
                         Email = "irmak@test.com"
@@ -52,7 +55,16 @@ namespace Persistence
                         Kategori = "Buluşma",
                         Tarih = DateTime.Now.AddMonths(-2),
                         Sehir = "İstanbul",
-                        Mekan = "Taksim"
+                        Mekan = "Taksim",
+                        KullaniciEtkinlikler = new List<KullaniciEtkinlik>
+                        {
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "a",
+                                YayinlandiMi = true,
+                                KatilmaTarihi = DateTime.Now.AddMonths(-2)
+                            }
+                        }
                     },
                     new Etkinlik
                     {
@@ -61,7 +73,22 @@ namespace Persistence
                         Kategori = "Kültür",
                         Tarih = DateTime.Now.AddMonths(-1),
                         Sehir = "İzmir",
-                        Mekan = "Efes Antik Kenti"
+                        Mekan = "Efes Antik Kenti",
+                        KullaniciEtkinlikler = new List<KullaniciEtkinlik>
+                        {
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "b",
+                                YayinlandiMi = true,
+                                KatilmaTarihi = DateTime.Now.AddMonths(-1)
+                            },
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "a",
+                                YayinlandiMi = false,
+                                KatilmaTarihi = DateTime.Now.AddMonths(-1)
+                            }
+                        }
                     },
                     new Etkinlik
                     {
@@ -70,7 +97,22 @@ namespace Persistence
                         Kategori = "Kültür",
                         Tarih = DateTime.Now.AddMonths(1),
                         Sehir = "İstanbul",
-                        Mekan = "Topkapı Sarayı"
+                        Mekan = "Topkapı Sarayı",
+                        KullaniciEtkinlikler = new List<KullaniciEtkinlik>
+                        {
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "b",
+                                YayinlandiMi = true,
+                                KatilmaTarihi = DateTime.Now.AddMonths(1)
+                            },
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "a",
+                                YayinlandiMi = false,
+                                KatilmaTarihi = DateTime.Now.AddMonths(1)
+                            }
+                        }
                     },
                     new Etkinlik
                     {
@@ -79,7 +121,22 @@ namespace Persistence
                         Kategori = "Müzik",
                         Tarih = DateTime.Now.AddMonths(2),
                         Sehir = "Antalya",
-                        Mekan = "Konyaaltı"
+                        Mekan = "Konyaaltı",
+                        KullaniciEtkinlikler = new List<KullaniciEtkinlik>
+                        {
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "c",
+                                YayinlandiMi = true,
+                                KatilmaTarihi = DateTime.Now.AddMonths(2)
+                            },
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "a",
+                                YayinlandiMi = false,
+                                KatilmaTarihi = DateTime.Now.AddMonths(2)
+                            }
+                        }
                     },
                     new Etkinlik
                     {
@@ -88,7 +145,22 @@ namespace Persistence
                         Kategori = "Buluşma",
                         Tarih = DateTime.Now.AddMonths(3),
                         Sehir = "Ankara",
-                        Mekan = "Kızılay"
+                        Mekan = "Kızılay",
+                        KullaniciEtkinlikler = new List<KullaniciEtkinlik>
+                        {
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "b",
+                                YayinlandiMi = true,
+                                KatilmaTarihi = DateTime.Now.AddMonths(3)
+                            },
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "c",
+                                YayinlandiMi = false,
+                                KatilmaTarihi = DateTime.Now.AddMonths(3)
+                            }
+                        }
                     },
                     new Etkinlik
                     {
@@ -97,7 +169,16 @@ namespace Persistence
                         Kategori = "Buluşma",
                         Tarih = DateTime.Now.AddMonths(4),
                         Sehir = "İzmir",
-                        Mekan = "Cumhuriyet Meydanı"
+                        Mekan = "Cumhuriyet Meydanı",
+                        KullaniciEtkinlikler = new List<KullaniciEtkinlik>
+                        {
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "a",
+                                YayinlandiMi = true,
+                                KatilmaTarihi = DateTime.Now.AddMonths(4)
+                            }
+                        }
                     },
                     new Etkinlik
                     {
@@ -106,7 +187,22 @@ namespace Persistence
                         Kategori = "Buluşma",
                         Tarih = DateTime.Now.AddMonths(5),
                         Sehir = "İstanbul",
-                        Mekan = "Sultanahmet Meydanı"
+                        Mekan = "Sultanahmet Meydanı",
+                        KullaniciEtkinlikler = new List<KullaniciEtkinlik>
+                        {
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "c",
+                                YayinlandiMi = true,
+                                KatilmaTarihi = DateTime.Now.AddMonths(5)
+                            },
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "b",
+                                YayinlandiMi = false,
+                                KatilmaTarihi = DateTime.Now.AddMonths(5)
+                            }
+                        }
                     },
                     new Etkinlik
                     {
@@ -115,7 +211,22 @@ namespace Persistence
                         Kategori = "Müzik",
                         Tarih = DateTime.Now.AddMonths(6),
                         Sehir = "Ankara",
-                        Mekan = "Opera"
+                        Mekan = "Opera",
+                        KullaniciEtkinlikler = new List<KullaniciEtkinlik>
+                        {
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "a",
+                                YayinlandiMi = true,
+                                KatilmaTarihi = DateTime.Now.AddMonths(6)
+                            },
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "b",
+                                YayinlandiMi = false,
+                                KatilmaTarihi = DateTime.Now.AddMonths(6)
+                            }
+                        }
                     },
                     new Etkinlik
                     {
@@ -124,7 +235,22 @@ namespace Persistence
                         Kategori = "Gezi",
                         Tarih = DateTime.Now.AddMonths(7),
                         Sehir = "Çanakkale",
-                        Mekan = "Gelibolu"
+                        Mekan = "Gelibolu",
+                        KullaniciEtkinlikler = new List<KullaniciEtkinlik>
+                        {
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "a",
+                                YayinlandiMi = true,
+                                KatilmaTarihi = DateTime.Now.AddMonths(7)
+                            },
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "c",
+                                YayinlandiMi = false,
+                                KatilmaTarihi = DateTime.Now.AddMonths(7)
+                            }
+                        }
                     },
                     new Etkinlik
                     {
@@ -133,12 +259,27 @@ namespace Persistence
                         Kategori = "Film",
                         Tarih = DateTime.Now.AddMonths(8),
                         Sehir = "İstanbul",
-                        Mekan = "Beyoğlu"
+                        Mekan = "Beyoğlu",
+                        KullaniciEtkinlikler = new List<KullaniciEtkinlik>
+                        {
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "b",
+                                YayinlandiMi = true,
+                                KatilmaTarihi = DateTime.Now.AddMonths(8)
+                            },
+                            new KullaniciEtkinlik
+                            {
+                                AppKullaniciId = "a",
+                                YayinlandiMi = false,
+                                KatilmaTarihi = DateTime.Now.AddMonths(8)
+                            }
+                        }
                     }
                 };
 
-                context.Etkinlikler.AddRange(etkinlikler);
-                context.SaveChanges();
+                await context.Etkinlikler.AddRangeAsync(etkinlikler);
+                await context.SaveChangesAsync();
             }
         }
     }

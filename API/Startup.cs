@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using AutoMapper;
 
 namespace API
 {
@@ -34,6 +35,7 @@ namespace API
         {
             services.AddDbContext<DataContext>(option =>
             {
+                option.UseLazyLoadingProxies();
                 option.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
             services.AddCors(option =>
@@ -44,6 +46,7 @@ namespace API
                 });
             });
             services.AddMediatR(typeof(Listele.Query).Assembly);
+            services.AddAutoMapper(typeof(Listele.Handler));
             services.AddControllers(option =>
             {
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
@@ -53,6 +56,15 @@ namespace API
 
             services.AddDefaultIdentity<AppUser>()
             .AddEntityFrameworkStores<DataContext>();
+
+            services.AddAuthorization(option =>
+            {
+                option.AddPolicy("EtkinlikYayinladiMi", policy =>
+                {
+                    policy.Requirements.Add(new YayinlandiMiKosul());
+                });
+            });
+            services.AddTransient<IAuthorizationHandler, YayinlandiMiKosulHandler>();
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
