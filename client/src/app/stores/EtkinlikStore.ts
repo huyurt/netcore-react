@@ -5,6 +5,8 @@ import agent from "../api/agent";
 import { history } from "../..";
 import { toast } from "react-toastify";
 import { RootStore } from "./rootStore";
+import { setEtkinlikProps, katilimciOlustur } from "../common/util/util";
+import { tr } from "date-fns/locale";
 
 export default class EtkinlikStore {
   rootStore: RootStore;
@@ -17,6 +19,7 @@ export default class EtkinlikStore {
   @observable yukleniyorInit = false;
   @observable submitting = false;
   @observable target = "";
+  @observable yukleniyor = false;
 
   @computed get etkinliklerTariheGoreSirali() {
     return this.etkinlikleriTariheGoreGrupla(
@@ -45,7 +48,7 @@ export default class EtkinlikStore {
       const etkinlikler = await agent.Etkinlikler.listele();
       runInAction("etkinlikler yüklendi", () => {
         etkinlikler.forEach(etkinlik => {
-          etkinlik.tarih = new Date(etkinlik.tarih);
+          setEtkinlikProps(etkinlik, this.rootStore.kullaniciStore.kullanici!);
           this.etkinlikRegistry.set(etkinlik.id, etkinlik);
         });
       });
@@ -94,6 +97,14 @@ export default class EtkinlikStore {
     this.submitting = true;
     try {
       await agent.Etkinlikler.olustur(etkinlik);
+      const katilimci = katilimciOlustur(
+        this.rootStore.kullaniciStore.kullanici!
+      );
+      katilimci.yayinlandiMi = true;
+      let katilimcilar = [];
+      katilimcilar.push(katilimci);
+      etkinlik.katilimcilar = katilimcilar;
+      etkinlik.yayinlandiMi = true;
       runInAction("etkinlik oluşturuldu", () => {
         this.etkinlikRegistry.set(etkinlik.id, etkinlik);
         this.submitting = false;
@@ -147,19 +158,50 @@ export default class EtkinlikStore {
     }
   };
 
-  @action etkinlikOlusturmaFormu = () => {
-    this.etkinlik = null;
+  @action etkinlikKatilim = async () => {
+    const katilimci = katilimciOlustur(
+      this.rootStore.kullaniciStore.kullanici!
+    );
+    this.yukleniyor = true;
+    try {
+      await agent.Etkinlikler.katil(this.etkinlik!.id);
+      runInAction(() => {
+        if (this.etkinlik) {
+          this.etkinlik.katilimcilar.push(katilimci);
+          this.etkinlik.gidiyorMu = true;
+          this.etkinlikRegistry.set(this.etkinlik.id, this.etkinlik);
+          this.yukleniyor = false;
+        }
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.yukleniyor = false;
+      });
+      toast.error("Etkinliğe katılım oluşturulamadı.");
+    }
   };
 
-  @action etkinlikDuzenleFormu = (id: string) => {
-    this.etkinlik = this.etkinlikRegistry.get(id);
-  };
-
-  @action seciliEtkinlikIptal = () => {
-    this.etkinlik = null;
-  };
-
-  @action seciliEtkinlik = (id: string) => {
-    this.etkinlik = this.etkinlikRegistry.get(id);
+  @action katilimIptal = async () => {
+    this.yukleniyor = true;
+    try {
+      await agent.Etkinlikler.katilma(this.etkinlik!.id);
+      runInAction(() => {
+        if (this.etkinlik) {
+          this.etkinlik.katilimcilar = this.etkinlik.katilimcilar.filter(
+            e =>
+              e.kullaniciAdi !==
+              this.rootStore.kullaniciStore.kullanici!.userName
+          );
+          this.etkinlik.gidiyorMu = false;
+          this.etkinlikRegistry.set(this.etkinlik.id, this.etkinlik);
+          this.yukleniyor = false;
+        }
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.yukleniyor = false;
+      });
+      toast.error("Etkinliğe katılım iptal edilemedi.");
+    }
   };
 }

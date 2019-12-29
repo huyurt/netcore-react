@@ -6,6 +6,9 @@ export interface IEtkinlik {
   tarih: Date;
   sehir: string;
   mekan: string;
+  gidiyorMu: boolean;
+  yayinlandiMi: boolean;
+  katilimcilar: IKatilimci[];
 }
 
 export interface IEtkinlikFormValues extends Partial<IEtkinlik> {
@@ -28,4 +31,11 @@ export class EtkinlikFormValues implements IEtkinlikFormValues {
     }
     Object.assign(this, init);
   }
+}
+
+export interface IKatilimci {
+  kullaniciAdi: string;
+  displayName: string;
+  resim: string;
+  yayinlandiMi: boolean;
 }

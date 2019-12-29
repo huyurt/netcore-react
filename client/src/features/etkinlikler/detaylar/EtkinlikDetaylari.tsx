@@ -37,7 +37,7 @@ const EtkinlikDetaylari: React.FC<RouteComponentProps<DetayParams>> = ({
         <EtkinlikDetayiSohbet />
       </Grid.Column>
       <Grid.Column width={6}>
-        <EtkinlikDetayiSidebar />
+        <EtkinlikDetayiSidebar katilimcilar={etkinlik.katilimcilar} />
       </Grid.Column>
     </Grid>
   );

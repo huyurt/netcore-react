@@ -1,3 +1,6 @@
+import { IEtkinlik, IKatilimci } from "../../models/etkinlik";
+import { IKullanici } from "../../models/kullanici";
+
 export const combineDateAndTime = (date: Date, time: Date) => {
   const timeString = time.getHours() + ":" + time.getMinutes() + ":00";
 
@@ -7,4 +10,27 @@ export const combineDateAndTime = (date: Date, time: Date) => {
   const dateString = `${year}-${month}-${day}`;
 
   return new Date(dateString + " " + timeString);
+};
+
+export const setEtkinlikProps = (
+  etkinlik: IEtkinlik,
+  kullanici: IKullanici
+) => {
+  etkinlik.tarih = new Date(etkinlik.tarih);
+  etkinlik.gidiyorMu = etkinlik.katilimcilar.some(
+    e => e.kullaniciAdi === kullanici.userName
+  );
+  etkinlik.yayinlandiMi = etkinlik.katilimcilar.some(
+    e => e.kullaniciAdi === kullanici.userName && e.yayinlandiMi
+  );
+  return etkinlik;
+};
+
+export const katilimciOlustur = (kullanici: IKullanici): IKatilimci => {
+  return {
+    displayName: kullanici.displayName,
+    yayinlandiMi: false,
+    kullaniciAdi: kullanici.userName,
+    resim: kullanici.image!
+  };
 };

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Segment, Item, Button, Image, Header } from "semantic-ui-react";
 import { IEtkinlik } from "../../../app/models/etkinlik";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
-import {format} from 'date-fns';
+import { format } from "date-fns";
 import { tr } from "date-fns/locale";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const activityImageStyle = {
   filter: "brightness(30%)"
@@ -22,6 +23,8 @@ const activityImageTextStyle = {
 const EtkinlikDetayiBaslik: React.FC<{ etkinlik: IEtkinlik }> = ({
   etkinlik
 }) => {
+  const rootStore = useContext(RootStoreContext);
+  const { etkinlikKatilim, katilimIptal, yukleniyor } = rootStore.etkinlikStore;
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: "0" }}>
@@ -39,7 +42,7 @@ const EtkinlikDetayiBaslik: React.FC<{ etkinlik: IEtkinlik }> = ({
                   content={etkinlik.baslik}
                   style={{ color: "white" }}
                 />
-                <p>{format(etkinlik.tarih, "eeee dd MMMM", {locale: tr})}</p>
+                <p>{format(etkinlik.tarih, "eeee dd MMMM", { locale: tr })}</p>
                 <p>
                   Hosted by <strong>Bob</strong>
                 </p>
@@ -49,16 +52,24 @@ const EtkinlikDetayiBaslik: React.FC<{ etkinlik: IEtkinlik }> = ({
         </Segment>
       </Segment>
       <Segment clearing attached="bottom">
-        <Button color="teal">Join Activity</Button>
-        <Button>Cancel attendance</Button>
-        <Button
-          as={Link}
-          to={`/manage/${etkinlik.id}`}
-          color="orange"
-          floated="right"
-        >
-          Manage Event
-        </Button>
+        {etkinlik.yayinlandiMi ? (
+          <Button
+            as={Link}
+            to={`/manage/${etkinlik.id}`}
+            color="orange"
+            floated="right"
+          >
+            Etkinliği Düzenle
+          </Button>
+        ) : etkinlik.gidiyorMu ? (
+          <Button loading={yukleniyor} onClick={katilimIptal}>
+            Etkinliğe Katılma
+          </Button>
+        ) : (
+          <Button loading={yukleniyor} onClick={etkinlikKatilim} color="teal">
+            Etkinliğe Katıl
+          </Button>
+        )}
       </Segment>
     </Segment.Group>
   );

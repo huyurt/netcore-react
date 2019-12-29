@@ -74,7 +74,9 @@ const Etkinlikler = {
   olustur: (etkinlik: IEtkinlik) => request.post(etkinliklerPath, etkinlik),
   guncelle: (etkinlik: IEtkinlik) =>
     request.put(`${etkinliklerPath}/${etkinlik.id}`, etkinlik),
-  sil: (id: string) => request.del(`${etkinliklerPath}/${id}`)
+  sil: (id: string) => request.del(`${etkinliklerPath}/${id}`),
+  katil: (id:string) => request.post(`${etkinliklerPath}/${id}/katil`, {}),
+  katilma: (id:string) => request.del(`${etkinliklerPath}/${id}/katil`)
 };
 
 const Kullanici = {
