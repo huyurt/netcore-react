@@ -25,6 +25,7 @@ const EtkinlikDetayiBaslik: React.FC<{ etkinlik: IEtkinlik }> = ({
 }) => {
   const rootStore = useContext(RootStoreContext);
   const { etkinlikKatilim, katilimIptal, yukleniyor } = rootStore.etkinlikStore;
+  const host = etkinlik.katilimcilar.filter(x => x.yayinlandiMi)[0];
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: "0" }}>
@@ -44,7 +45,10 @@ const EtkinlikDetayiBaslik: React.FC<{ etkinlik: IEtkinlik }> = ({
                 />
                 <p>{format(etkinlik.tarih, "eeee dd MMMM", { locale: tr })}</p>
                 <p>
-                  Hosted by <strong>Bob</strong>
+                  <Link to={`/profil/${host.kullaniciAdi}`}>
+                    <strong>{host.displayName}</strong>
+                  </Link>{" "}
+                  tarafından paylaşıldı
                 </p>
               </Item.Content>
             </Item>

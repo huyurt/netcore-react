@@ -18,13 +18,17 @@ const EtkinlikListesiItem: React.FC<{ etkinlik: IEtkinlik }> = ({
               size="tiny"
               circular
               src={host.resim || "/assets/user.png"}
+              style={{ marginBottom: 3 }}
             />
             <Item.Content>
               <Item.Header as={Link} to={`/etkinlikler/${etkinlik.id}`}>
                 {etkinlik.baslik}
               </Item.Header>
               <Item.Description>
-                {host.displayName} tarafından paylaşıldı
+                <Link to={`/profil/${host.kullaniciAdi}`}>
+                  {host.displayName}
+                </Link>{" "}
+                tarafından paylaşıldı
               </Item.Description>
               {etkinlik.yayinlandiMi && (
                 <Item.Description>

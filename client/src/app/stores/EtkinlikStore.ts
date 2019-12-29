@@ -6,7 +6,6 @@ import { history } from "../..";
 import { toast } from "react-toastify";
 import { RootStore } from "./rootStore";
 import { setEtkinlikProps, katilimciOlustur } from "../common/util/util";
-import { tr } from "date-fns/locale";
 
 export default class EtkinlikStore {
   rootStore: RootStore;

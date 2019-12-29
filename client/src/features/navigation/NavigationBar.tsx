@@ -38,8 +38,8 @@ const NavigationBar: React.FC = () => {
               <Dropdown.Menu>
                 <Dropdown.Item
                   as={Link}
-                  to={`/profile/username`}
-                  text="My profile"
+                  to={`/profil/${kullanici.userName}`}
+                  text="Profilim"
                   icon="user"
                 />
                 <Dropdown.Item onClick={logout} text="Logout" icon="power" />

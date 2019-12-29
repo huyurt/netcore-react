@@ -18,6 +18,7 @@ import LoginForm from "../../features/kullanici/LoginForm";
 import { RootStoreContext } from "../stores/rootStore";
 import { LoadingIndicator } from "./LoadingIndicator";
 import ModalContainer from "../common/modals/ModalContainer";
+import ProfilSayfasi from "../../features/profil/ProfilSayfasi";
 
 const App: React.FC<RouteComponentProps> = ({ location }) => {
   const rootStore = useContext(RootStoreContext);
@@ -58,6 +59,7 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
                   path={["/etkinlikOlustur", "/manage/:id"]}
                   component={EtkinlikForm}
                 />
+                <Route path="/profil/:username" component={ProfilSayfasi} />
                 <Route path="/giris" component={LoginForm} />
                 <Route component={NotFound} />
               </Switch>

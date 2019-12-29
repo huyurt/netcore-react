@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Interfaces;
@@ -32,7 +33,7 @@ namespace Application.Kullanici
                     DisplayName = kullanici.DisplayName,
                     Token = _jwtGenerator.CreateToken(kullanici),
                     UserName = kullanici.UserName,
-                    Image = null
+                    Image = kullanici.Resimler.FirstOrDefault(x => x.AnaResimMi)?.Url
                 };
             }
         }

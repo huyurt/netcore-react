@@ -3,6 +3,7 @@ import { IEtkinlik } from "../models/etkinlik";
 import { history } from "../..";
 import { toast } from "react-toastify";
 import { IKullanici, IKullaniciFormValues } from "../models/kullanici";
+import { IProfil, IResim } from "../models/profil";
 
 axios.defaults.baseURL = "http://localhost:5000";
 axios.interceptors.request.use(
@@ -65,7 +66,16 @@ const request = {
     axios
       .delete(url)
       .then(bekle(1000))
-      .then(responseBody)
+      .then(responseBody),
+  postForm: (url: string, file: Blob) => {
+    let formData = new FormData();
+    formData.append("File", file);
+    return axios
+      .post(url, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      })
+      .then(responseBody);
+  }
 };
 
 const Etkinlikler = {
@@ -75,8 +85,8 @@ const Etkinlikler = {
   guncelle: (etkinlik: IEtkinlik) =>
     request.put(`${etkinliklerPath}/${etkinlik.id}`, etkinlik),
   sil: (id: string) => request.del(`${etkinliklerPath}/${id}`),
-  katil: (id:string) => request.post(`${etkinliklerPath}/${id}/katil`, {}),
-  katilma: (id:string) => request.del(`${etkinliklerPath}/${id}/katil`)
+  katil: (id: string) => request.post(`${etkinliklerPath}/${id}/katil`, {}),
+  katilma: (id: string) => request.del(`${etkinliklerPath}/${id}/katil`)
 };
 
 const Kullanici = {
@@ -87,4 +97,14 @@ const Kullanici = {
     request.post(`kullanici/kayit`, kullanici)
 };
 
-export default { Etkinlikler, Kullanici };
+const Profil = {
+  get: (userName: string): Promise<IProfil> =>
+    request.get(`/profil/${userName}`),
+  uploadResim: (resim: Blob): Promise<IResim> =>
+    request.postForm(`/resim`, resim),
+  setAnaResim: (id: string) => request.post(`/resim/${id}/setMain`, {}),
+  resimSil: (id: string) => request.del(`/resim/${id}`),
+  profilGuncelle: (profil: Partial<IProfil>) => request.put(`/profil`, profil)
+};
+
+export default { Etkinlikler, Kullanici, Profil };

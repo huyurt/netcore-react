@@ -6,6 +6,8 @@ namespace Domain
     public class AppUser : IdentityUser
     {
         public string DisplayName { get; set; }
+        public string Bio { get; set; }
         public virtual ICollection<KullaniciEtkinlik> KullaniciEtkinlikler { get; set; }
+        public virtual ICollection<Resim> Resimler { get; set; }
     }
 }
