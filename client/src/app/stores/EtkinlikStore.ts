@@ -6,6 +6,7 @@ import { history } from "../..";
 import { toast } from "react-toastify";
 import { RootStore } from "./rootStore";
 import { setEtkinlikProps, katilimciOlustur } from "../common/util/util";
+import { HubConnection, HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
 
 export default class EtkinlikStore {
   rootStore: RootStore;
@@ -19,6 +20,38 @@ export default class EtkinlikStore {
   @observable submitting = false;
   @observable target = "";
   @observable yukleniyor = false;
+  @observable.ref hubConnection: HubConnection | null = null;
+
+  @action hubConnectionOlustur = () => {
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl("http://localhost:5000/chat", {
+        accessTokenFactory: () => this.rootStore.commonStore.token!
+      })
+      .configureLogging(LogLevel.Information)
+      .build();
+
+    this.hubConnection
+      .start()
+      .then(() => console.log(this.hubConnection!.state))
+      .catch(error => console.log("Bağlanırken hata oluştu: ", error));
+
+    this.hubConnection.on("YorumYapildi", yorum => {
+      runInAction(() => {
+        this.etkinlik!.yorumlar.push(yorum);
+      });
+    });
+  };
+
+  @action hubConnectionDurdur = () => {
+    this.hubConnection!.stop();
+  };
+
+  @action yorumEkle = async (values: any) => {
+    values.etkinlikId = this.etkinlik!.id;
+    try {
+      await this.hubConnection!.invoke("YorumGonder", values);
+    } catch (error) {}
+  };
 
   @computed get etkinliklerTariheGoreSirali() {
     return this.etkinlikleriTariheGoreGrupla(
@@ -103,6 +136,7 @@ export default class EtkinlikStore {
       let katilimcilar = [];
       katilimcilar.push(katilimci);
       etkinlik.katilimcilar = katilimcilar;
+      etkinlik.yorumlar = [];
       etkinlik.yayinlandiMi = true;
       runInAction("etkinlik oluşturuldu", () => {
         this.etkinlikRegistry.set(etkinlik.id, etkinlik);

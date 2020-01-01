@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using AutoMapper;
 using Infrastructure.Resimler;
+using System.Threading.Tasks;
+using API.SignalR;
 
 namespace API
 {
@@ -43,11 +45,12 @@ namespace API
             {
                 option.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials();
                 });
             });
             services.AddMediatR(typeof(Listele.Query).Assembly);
             services.AddAutoMapper(typeof(Listele.Handler));
+            services.AddSignalR();
             services.AddControllers(option =>
             {
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
@@ -78,6 +81,19 @@ namespace API
                     ValidateAudience = false,
                     ValidateIssuer = false
                 };
+                option.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/chat")))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<IKullaniciErisimi, KullaniciErisimi>();
@@ -97,8 +113,8 @@ namespace API
             //app.UseHttpsRedirection();
 
             app.UseAuthentication();
-
             app.UseCors("CorsPolicy");
+            app.UseSignalR(routes => { routes.MapHub<ChatHub>("/chat"); });
 
             app.UseRouting();
 

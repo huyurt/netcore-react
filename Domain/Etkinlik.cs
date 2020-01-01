@@ -13,5 +13,6 @@ namespace Domain
         public string Sehir { get; set; }
         public string Mekan { get; set; }
         public virtual ICollection<KullaniciEtkinlik> KullaniciEtkinlikler { get; set; }
+        public virtual ICollection<Yorum> Yorumlar { get; set; }
     }
 }

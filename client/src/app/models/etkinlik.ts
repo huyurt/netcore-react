@@ -9,6 +9,16 @@ export interface IEtkinlik {
   gidiyorMu: boolean;
   yayinlandiMi: boolean;
   katilimcilar: IKatilimci[];
+  yorumlar: IYorum[];
+}
+
+export interface IYorum {
+  id: string;
+  tarih: Date;
+  icerik: string;
+  kullaniciAdi: string;
+  displayName: string;
+  resim: string;
 }
 
 export interface IEtkinlikFormValues extends Partial<IEtkinlik> {

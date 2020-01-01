@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Application.Yorumlar;
 using Newtonsoft.Json;
 
 namespace Application.Etkinlikler
@@ -16,5 +17,6 @@ namespace Application.Etkinlikler
 
         [JsonProperty("Katilimcilar")]
         public ICollection<KatilimciDto> KullaniciEtkinlikler { get; set; }
+        public ICollection<YorumDto> Yorumlar { get; set; }
     }
 }

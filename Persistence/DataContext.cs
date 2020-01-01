@@ -14,6 +14,7 @@ namespace Persistence
         public DbSet<Etkinlik> Etkinlikler { get; set; }
         public DbSet<KullaniciEtkinlik> KullaniciEtkinlikler { get; set; }
         public DbSet<Resim> Resimler { get; set; }
+        public DbSet<Yorum> Yorumlar { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
