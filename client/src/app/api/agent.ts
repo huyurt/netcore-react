@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 import { IKullanici, IKullaniciFormValues } from "../models/kullanici";
 import { IProfil, IResim } from "../models/profil";
 
-axios.defaults.baseURL = "http://localhost:5000";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+
 axios.interceptors.request.use(
   config => {
     const token = window.localStorage.getItem("jwt");
@@ -20,9 +21,18 @@ axios.interceptors.response.use(undefined, error => {
   if (error.message === "Network Error" && !error.response) {
     toast.error("Bağlantı hatası");
   }
-  const { status, data, config } = error.response;
+  const { status, data, config, headers } = error.response;
   if (status === 404) {
     history.push("/notfound");
+  }
+  if (
+    status === 401 &&
+    headers["www-authenticate"] ===
+      'Bearer error="invalid_token", error_description="The token is expired"'
+  ) {
+    window.localStorage.removeItem("jwt");
+    history.push("/");
+    toast.info("Oturum süreniz bitmiştir, lütfen tekrar giriş yapınız.");
   }
   if (
     status === 400 &&
@@ -39,32 +49,11 @@ axios.interceptors.response.use(undefined, error => {
 
 const responseBody = (response: AxiosResponse) => response.data;
 
-const bekle = (ms: number) => (response: AxiosResponse) =>
-  new Promise<AxiosResponse>(revolse =>
-    setTimeout(() => revolse(response), ms)
-  );
-
 const request = {
-  get: (url: string) =>
-    axios
-      .get(url)
-      .then(bekle(1000))
-      .then(responseBody),
-  post: (url: string, body: {}) =>
-    axios
-      .post(url, body)
-      .then(bekle(1000))
-      .then(responseBody),
-  put: (url: string, body: {}) =>
-    axios
-      .put(url, body)
-      .then(bekle(1000))
-      .then(responseBody),
-  del: (url: string) =>
-    axios
-      .delete(url)
-      .then(bekle(1000))
-      .then(responseBody),
+  get: (url: string) => axios.get(url).then(responseBody),
+  post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
+  put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
+  del: (url: string) => axios.delete(url).then(responseBody),
   postForm: (url: string, file: Blob) => {
     let formData = new FormData();
     formData.append("File", file);
@@ -78,10 +67,7 @@ const request = {
 
 const Etkinlikler = {
   listele: (params: URLSearchParams): Promise<IEtkinlikEnvelope> =>
-    axios
-      .get("/etkinlikler", { params: params })
-      .then(bekle(1000))
-      .then(responseBody),
+    axios.get("/etkinlikler", { params: params }).then(responseBody),
   detaylar: (id: string) => request.get(`/etkinlikler/${id}`),
   olustur: (etkinlik: IEtkinlik) => request.post("/etkinlikler", etkinlik),
   guncelle: (etkinlik: IEtkinlik) =>

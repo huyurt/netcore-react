@@ -6,6 +6,7 @@ import LoginForm from "../kullanici/LoginForm";
 import KayitForm from "../kullanici/KayitForm";
 
 const AnaSayfa = () => {
+  const token = window.localStorage.getItem("jwt");
   const rootStore = useContext(RootStoreContext);
   const { isLoggedIn, kullanici } = rootStore.kullaniciStore;
   const { openModal } = rootStore.modalStore;
@@ -21,7 +22,7 @@ const AnaSayfa = () => {
           />
           Uygulama
         </Header>
-        {isLoggedIn && kullanici ? (
+        {isLoggedIn && kullanici && token ? (
           <Fragment>
             <Header
               as="h2"

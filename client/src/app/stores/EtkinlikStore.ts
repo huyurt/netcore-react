@@ -1,5 +1,12 @@
 import { SyntheticEvent } from "react";
-import { observable, action, computed, runInAction, reaction } from "mobx";
+import {
+  observable,
+  action,
+  computed,
+  runInAction,
+  reaction,
+  toJS
+} from "mobx";
 import { IEtkinlik } from "../models/etkinlik";
 import agent from "../api/agent";
 import { history } from "../..";
@@ -67,7 +74,7 @@ export default class EtkinlikStore {
 
   @action hubConnectionOlustur = () => {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl("http://localhost:5000/chat", {
+      .withUrl(process.env.REACT_APP_API_CHAT_URL!, {
         accessTokenFactory: () => this.rootStore.commonStore.token!
       })
       .configureLogging(LogLevel.Information)
@@ -143,7 +150,7 @@ export default class EtkinlikStore {
     let etkinlik = this.getEtkinlik(id);
     if (etkinlik) {
       this.etkinlik = etkinlik;
-      return etkinlik;
+      return toJS(etkinlik);
     } else {
       this.yukleniyorInit = true;
       try {

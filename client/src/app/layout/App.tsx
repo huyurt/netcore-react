@@ -14,11 +14,11 @@ import EtkinlikForm from "../../features/etkinlikler/form/EtkinlikForm";
 import EtkinlikDetaylari from "../../features/etkinlikler/detaylar/EtkinlikDetaylari";
 import NotFound from "./NotFound";
 import { ToastContainer } from "react-toastify";
-import LoginForm from "../../features/kullanici/LoginForm";
 import { RootStoreContext } from "../stores/rootStore";
 import { LoadingIndicator } from "./LoadingIndicator";
 import ModalContainer from "../common/modals/ModalContainer";
 import ProfilSayfasi from "../../features/profil/ProfilSayfasi";
+import PrivateRoute from "./PrivateRoute";
 
 const App: React.FC<RouteComponentProps> = ({ location }) => {
   const rootStore = useContext(RootStoreContext);
@@ -47,20 +47,24 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
             <NavigationBar />
             <Container style={{ marginTop: "7em" }}>
               <Switch>
-                <Route exact path="/" component={AnaSayfa} />
-                <Route
+                <PrivateRoute
                   exact
                   path="/etkinlikler"
                   component={EtkinlikDashboard}
                 />
-                <Route path="/etkinlikler/:id" component={EtkinlikDetaylari} />
-                <Route
+                <PrivateRoute
+                  path="/etkinlikler/:id"
+                  component={EtkinlikDetaylari}
+                />
+                <PrivateRoute
                   key={location.key}
                   path={["/etkinlikOlustur", "/manage/:id"]}
                   component={EtkinlikForm}
                 />
-                <Route path="/profil/:username" component={ProfilSayfasi} />
-                <Route path="/giris" component={LoginForm} />
+                <PrivateRoute
+                  path="/profil/:username"
+                  component={ProfilSayfasi}
+                />
                 <Route component={NotFound} />
               </Switch>
             </Container>

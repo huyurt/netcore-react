@@ -22,6 +22,7 @@ using Infrastructure.Resimler;
 using System.Threading.Tasks;
 using API.SignalR;
 using Application.Profiller;
+using System;
 
 namespace API
 {
@@ -35,18 +36,39 @@ namespace API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(option =>
             {
                 option.UseLazyLoadingProxies();
                 option.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            ConfigureServices(services);
+        }
+
+        public void ConfigureProductionServices(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>(option =>
+            {
+                option.UseLazyLoadingProxies();
+                option.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            ConfigureServices(services);
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
             services.AddCors(option =>
             {
                 option.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials();
+                    policy.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithExposedHeaders("WWW-Authenticate")
+                        .WithOrigins("http://localhost:3000")
+                        .AllowCredentials();
                 });
             });
             services.AddMediatR(typeof(Listele.Query).Assembly);
@@ -80,7 +102,9 @@ namespace API
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = key,
                     ValidateAudience = false,
-                    ValidateIssuer = false
+                    ValidateIssuer = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 };
                 option.Events = new JwtBearerEvents
                 {
@@ -112,8 +136,23 @@ namespace API
                 //app.UseDeveloperExceptionPage();
             }
 
-            //app.UseHttpsRedirection();
+            app.UseXContentTypeOptions();
+            app.UseReferrerPolicy(option => option.NoReferrer());
+            app.UseXXssProtection(option => option.EnabledWithBlockMode());
+            app.UseXfo(option => option.Deny());
+            app.UseCsp(option => option
+                .BlockAllMixedContent()
+                .StyleSources(s => s.Self().CustomSources("https://fonts.googleapis.com"))
+                .FontSources(s => s.Self().CustomSources("https://fonts.gstatic.com", "data:"))
+                .FormActions(s => s.Self())
+                .FrameAncestors(s => s.Self())
+                .ImageSources(s => s.Self().CustomSources("https://res.cloudinary.com", "blob:"))
+                .ScriptSources(s => s.Self().CustomSources("sha256-5As4+3YpY62+l38PsxCEkjB1R4YtyktBtRScTJ3fyLU="))
+            );
 
+            //app.UseHttpsRedirection();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
             app.UseSignalR(routes => { routes.MapHub<ChatHub>("/chat"); });
@@ -124,6 +163,7 @@ namespace API
 
             app.UseEndpoints(endpoints =>
             {
+                //endpoints.MapHub<ChatHub>("/chat");
                 endpoints.MapControllers();
             });
         }

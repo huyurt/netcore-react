@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { Grid, Loader } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import EtkinlikListesi from "./EtkinlikListesi";
-import { LoadingIndicator } from "../../../app/layout/LoadingIndicator";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import InfiniteScroll from "react-infinite-scroller";
 import EtkinlikFiltrele from "./EtkinlikFiltrele";
+import EtkinlikListesiItemPlaceholder from "./EtkinlikListesiItemPlaceholder";
 
 const EtkinlikDashboard: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
@@ -28,20 +28,21 @@ const EtkinlikDashboard: React.FC = () => {
     etkinlikleriYukle();
   }, [etkinlikleriYukle]);
 
-  if (yukleniyorInit && sayfa === 0)
-    return <LoadingIndicator content="Etkinlikler yükleniyor..." />;
-
   return (
     <Grid>
       <Grid.Column width={10}>
-        <InfiniteScroll
-          pageStart={0}
-          loadMore={handleGetNext}
-          hasMore={!loadingNext && sayfa + 1 < toplamSayfa}
-          initialLoad={false}
-        >
-          <EtkinlikListesi />
-        </InfiniteScroll>
+        {yukleniyorInit && sayfa === 0 ? (
+          <EtkinlikListesiItemPlaceholder />
+        ) : (
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={handleGetNext}
+            hasMore={!loadingNext && sayfa + 1 < toplamSayfa}
+            initialLoad={false}
+          >
+            <EtkinlikListesi />
+          </InfiniteScroll>
+        )}
       </Grid.Column>
       <Grid.Column width={6}>
         <EtkinlikFiltrele />
