@@ -1,3 +1,8 @@
+export interface IEtkinlikEnvelope {
+  etkinlikler: IEtkinlik[];
+  etkinlikSayisi: number;
+}
+
 export interface IEtkinlik {
   id: string;
   baslik: string;

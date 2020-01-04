@@ -1,9 +1,8 @@
-import { observable, computed, action, runInAction, values } from "mobx";
+import { observable, computed, action, runInAction } from "mobx";
 import { IKullanici, IKullaniciFormValues } from "../models/kullanici";
 import agent from "../api/agent";
 import { RootStore } from "./rootStore";
 import { history } from "../..";
-import { ca } from "date-fns/locale";
 
 export default class KullaniciStore {
   rootStore: RootStore;

@@ -1,5 +1,5 @@
 import { SyntheticEvent } from "react";
-import { observable, action, computed, runInAction } from "mobx";
+import { observable, action, computed, runInAction, reaction } from "mobx";
 import { IEtkinlik } from "../models/etkinlik";
 import agent from "../api/agent";
 import { history } from "../..";
@@ -8,10 +8,21 @@ import { RootStore } from "./rootStore";
 import { setEtkinlikProps, katilimciOlustur } from "../common/util/util";
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
 
+const LIMIT = 2;
+
 export default class EtkinlikStore {
   rootStore: RootStore;
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
+
+    reaction(
+      () => this.predicate.keys(),
+      () => {
+        this.sayfa = 0;
+        this.etkinlikRegistry.clear();
+        this.etkinlikleriYukle();
+      }
+    );
   }
 
   @observable etkinlikRegistry = new Map();
@@ -21,6 +32,38 @@ export default class EtkinlikStore {
   @observable target = "";
   @observable yukleniyor = false;
   @observable.ref hubConnection: HubConnection | null = null;
+  @observable etkinlikSayisi = 0;
+  @observable sayfa = 0;
+  @observable predicate = new Map();
+
+  @action setPredicate = (predicate: string, value: string | Date) => {
+    this.predicate.clear();
+    if (predicate !== "all") {
+      this.predicate.set(predicate, value);
+    }
+  };
+
+  @computed get axiosParams() {
+    const params = new URLSearchParams();
+    params.append("limit", String(LIMIT));
+    params.append("offset", `${this.sayfa ? this.sayfa * LIMIT : 0}`);
+    this.predicate.forEach((value, key) => {
+      if (key === "startDate") {
+        params.append(key, value.toISOString());
+      } else {
+        params.append(key, value);
+      }
+    });
+    return params;
+  }
+
+  @computed get toplamSayfa() {
+    return Math.ceil(this.etkinlikSayisi / LIMIT);
+  }
+
+  @action setSayfa = (sayfa: number) => {
+    this.sayfa = sayfa;
+  };
 
   @action hubConnectionOlustur = () => {
     this.hubConnection = new HubConnectionBuilder()
@@ -77,13 +120,17 @@ export default class EtkinlikStore {
   @action etkinlikleriYukle = async () => {
     this.yukleniyorInit = true;
     try {
-      const etkinlikler = await agent.Etkinlikler.listele();
+      const etkinliklerEnvelope = await agent.Etkinlikler.listele(
+        this.axiosParams
+      );
+      const { etkinlikler, etkinlikSayisi } = etkinliklerEnvelope;
       runInAction("etkinlikler yüklendi", () => {
         etkinlikler.forEach(etkinlik => {
           setEtkinlikProps(etkinlik, this.rootStore.kullaniciStore.kullanici!);
           this.etkinlikRegistry.set(etkinlik.id, etkinlik);
         });
       });
+      this.etkinlikSayisi = etkinlikSayisi;
       this.yukleniyorInit = false;
     } catch (error) {
       runInAction("etkinlikleri yükle hatası", () => {

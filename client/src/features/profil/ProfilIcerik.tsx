@@ -3,13 +3,14 @@ import { Tab } from "semantic-ui-react";
 import ProfilResmi from "./ProfilResmi";
 import ProfilDescription from "./ProfilDescription";
 import ProfilTakipcileri from "./ProfilTakipciler";
+import ProfilEtkinlikler from "./ProfilEtkinlikler";
 
 const panes = [
   { menuItem: "Hakkında", render: () => <ProfilDescription /> },
   { menuItem: "Resimler", render: () => <ProfilResmi /> },
   {
     menuItem: "Etkinlikler",
-    render: () => <Tab.Pane>Etkinlik içeriği</Tab.Pane>
+    render: () => <ProfilEtkinlikler />
   },
   {
     menuItem: "Takipçiler",

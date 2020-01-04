@@ -14,3 +14,10 @@ export interface IResim {
   url: string;
   anaResimMi: boolean;
 }
+
+export interface IKullaniciEtkinlik {
+  id: string;
+  baslik: string;
+  kategori: string;
+  tarih: Date;
+}

@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { IEtkinlik } from "../models/etkinlik";
+import { IEtkinlik, IEtkinlikEnvelope } from "../models/etkinlik";
 import { history } from "../..";
 import { toast } from "react-toastify";
 import { IKullanici, IKullaniciFormValues } from "../models/kullanici";
@@ -36,8 +36,6 @@ axios.interceptors.response.use(undefined, error => {
   }
   throw error.response;
 });
-
-const etkinliklerPath = "/api/etkinlikler";
 
 const responseBody = (response: AxiosResponse) => response.data;
 
@@ -79,22 +77,26 @@ const request = {
 };
 
 const Etkinlikler = {
-  listele: (): Promise<IEtkinlik[]> => request.get(etkinliklerPath),
-  detaylar: (id: string) => request.get(`${etkinliklerPath}/${id}`),
-  olustur: (etkinlik: IEtkinlik) => request.post(etkinliklerPath, etkinlik),
+  listele: (params: URLSearchParams): Promise<IEtkinlikEnvelope> =>
+    axios
+      .get("/etkinlikler", { params: params })
+      .then(bekle(1000))
+      .then(responseBody),
+  detaylar: (id: string) => request.get(`/etkinlikler/${id}`),
+  olustur: (etkinlik: IEtkinlik) => request.post("/etkinlikler", etkinlik),
   guncelle: (etkinlik: IEtkinlik) =>
-    request.put(`${etkinliklerPath}/${etkinlik.id}`, etkinlik),
-  sil: (id: string) => request.del(`${etkinliklerPath}/${id}`),
-  katil: (id: string) => request.post(`${etkinliklerPath}/${id}/katil`, {}),
-  katilma: (id: string) => request.del(`${etkinliklerPath}/${id}/katil`)
+    request.put(`/etkinlikler/${etkinlik.id}`, etkinlik),
+  sil: (id: string) => request.del(`/etkinlikler/${id}`),
+  katil: (id: string) => request.post(`$/etkinlikler/${id}/katil`, {}),
+  katilma: (id: string) => request.del(`/etkinlikler/${id}/katil`)
 };
 
 const Kullanici = {
   current: (): Promise<IKullanici> => request.get("/kullanici"),
   login: (kullanici: IKullaniciFormValues): Promise<IKullanici> =>
-    request.post(`kullanici/giris`, kullanici),
+    request.post(`/kullanici/giris`, kullanici),
   kayit: (kullanici: IKullaniciFormValues): Promise<IKullanici> =>
-    request.post(`kullanici/kayit`, kullanici)
+    request.post(`/kullanici/kayit`, kullanici)
 };
 
 const Profil = {
@@ -109,7 +111,9 @@ const Profil = {
     request.post(`/profil/${kullaniciAdi}/takip`, {}),
   takibiBirak: (kullaniciAdi: string) => request.del(`/profil/${kullaniciAdi}`),
   takipEdilenleriListele: (kullaniciAdi: string, predicate: string) =>
-    request.get(`/profil/${kullaniciAdi}/takip?predicate=${predicate}`)
+    request.get(`/profil/${kullaniciAdi}/takip?predicate=${predicate}`),
+  etkinlikleriListele: (kullaniciAdi: string, predicate: string) =>
+    request.get(`/profil/${kullaniciAdi}/etkinlikler?predicate=${predicate}`)
 };
 
 export default { Etkinlikler, Kullanici, Profil };

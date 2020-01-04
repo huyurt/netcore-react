@@ -1,6 +1,6 @@
 import { RootStore } from "./rootStore";
 import { observable, action, runInAction, computed, reaction } from "mobx";
-import { IProfil, IResim } from "../models/profil";
+import { IProfil, IResim, IKullaniciEtkinlik } from "../models/profil";
 import agent from "../api/agent";
 import { toast } from "react-toastify";
 
@@ -28,6 +28,8 @@ export default class ProfilStore {
   @observable yukleniyor = false;
   @observable takipEdilenler: IProfil[] = [];
   @observable aktifTab: number = 0;
+  @observable kullaniciEtkinlikleri: IKullaniciEtkinlik[] = [];
+  @observable etkinliklerYukleniyor = false;
 
   @computed get isCurrentUser() {
     if (this.rootStore.kullaniciStore.kullanici && this.profil) {
@@ -39,6 +41,28 @@ export default class ProfilStore {
       return false;
     }
   }
+
+  @action kullaniciEtkinlikleriniYukle = async (
+    kullaniciAdi: string,
+    predicate?: string
+  ) => {
+    this.etkinliklerYukleniyor = true;
+    try {
+      const etkinlikler = await agent.Profil.etkinlikleriListele(
+        kullaniciAdi,
+        predicate!
+      );
+      runInAction(() => {
+        this.kullaniciEtkinlikleri = etkinlikler;
+        this.etkinliklerYukleniyor = false;
+      });
+    } catch (error) {
+      toast.error("Etkinlikler yüklenirken sorun oluştu.");
+      runInAction(() => {
+        this.etkinliklerYukleniyor = false;
+      });
+    }
+  };
 
   @action setAktifTab = (aktifIndeks: number) => {
     this.aktifTab = aktifIndeks;
@@ -139,7 +163,7 @@ export default class ProfilStore {
     try {
       await agent.Profil.takipEt(kullaniciAdi);
       runInAction(() => {
-        this.profil!.takipEdilen = true;
+        this.profil!.takipEdiliyor = true;
         this.profil!.takipciSayisi++;
         this.yukleniyor = false;
       });
@@ -156,7 +180,7 @@ export default class ProfilStore {
     try {
       await agent.Profil.takibiBirak(kullaniciAdi);
       runInAction(() => {
-        this.profil!.takipEdilen = false;
+        this.profil!.takipEdiliyor = false;
         this.profil!.takipciSayisi--;
         this.yukleniyor = false;
       });

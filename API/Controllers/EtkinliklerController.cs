@@ -12,9 +12,9 @@ namespace API.Controllers
     public class EtkinliklerController : BaseController
     {
         [HttpGet]
-        public async Task<ActionResult<List<EtkinlikDto>>> Listele()
+        public async Task<ActionResult<Listele.EtkinlikEnvelope>> Listele(int? limit, int? offset, bool isGoing, bool isHost, DateTime? startDate)
         {
-            return await Mediator.Send(new Listele.Query());
+            return await Mediator.Send(new Listele.Query(limit, offset, isGoing, isHost, startDate));
         }
 
         [HttpGet("{id}")]

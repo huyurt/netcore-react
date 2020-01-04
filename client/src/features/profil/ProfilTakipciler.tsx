@@ -28,9 +28,9 @@ const ProfilTakipcileri = () => {
         </Grid.Column>
         <Grid.Column width={16}>
           <Card.Group itemsPerRow={5}>
-            {takipEdilenler.map(profil => {
-              <ProfilCard key={profil?.userName} profil={profil} />;
-            })}
+            {takipEdilenler.map(profil => (
+              <ProfilCard key={profil.userName} profil={profil} />
+            ))}
           </Card.Group>
         </Grid.Column>
       </Grid>

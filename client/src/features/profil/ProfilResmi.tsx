@@ -47,7 +47,7 @@ const ProfilResmi = () => {
           ) : (
             <Card.Group itemsPerRow={5}>
               {profil &&
-                profil.resimler.map(resim => {
+                profil.resimler.map(resim => (
                   <Card key={resim.id}>
                     <Image src={resim.url} />
                     {isCurrentUser && (
@@ -71,15 +71,15 @@ const ProfilResmi = () => {
                             resimSil(resim);
                             setDeleteTarget(e.currentTarget.name);
                           }}
-                          loading={yukleniyor && deleteTarget == resim.id}
+                          loading={yukleniyor && deleteTarget === resim.id}
                           basic
                           negative
                           icon="trash"
                         />
                       </Button.Group>
                     )}
-                  </Card>;
-                })}
+                  </Card>
+                ))}
             </Card.Group>
           )}
         </Grid.Column>
