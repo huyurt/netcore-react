@@ -104,7 +104,12 @@ const Profil = {
     request.postForm(`/resim`, resim),
   setAnaResim: (id: string) => request.post(`/resim/${id}/setMain`, {}),
   resimSil: (id: string) => request.del(`/resim/${id}`),
-  profilGuncelle: (profil: Partial<IProfil>) => request.put(`/profil`, profil)
+  profilGuncelle: (profil: Partial<IProfil>) => request.put(`/profil`, profil),
+  takipEt: (kullaniciAdi: string) =>
+    request.post(`/profil/${kullaniciAdi}/takip`, {}),
+  takibiBirak: (kullaniciAdi: string) => request.del(`/profil/${kullaniciAdi}`),
+  takipEdilenleriListele: (kullaniciAdi: string, predicate: string) =>
+    request.get(`/profil/${kullaniciAdi}/takip?predicate=${predicate}`)
 };
 
 export default { Etkinlikler, Kullanici, Profil };

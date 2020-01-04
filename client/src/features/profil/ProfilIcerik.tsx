@@ -2,6 +2,7 @@ import React from "react";
 import { Tab } from "semantic-ui-react";
 import ProfilResmi from "./ProfilResmi";
 import ProfilDescription from "./ProfilDescription";
+import ProfilTakipcileri from "./ProfilTakipciler";
 
 const panes = [
   { menuItem: "Hakkında", render: () => <ProfilDescription /> },
@@ -12,20 +13,25 @@ const panes = [
   },
   {
     menuItem: "Takipçiler",
-    render: () => <Tab.Pane>Takipçiler içeriği</Tab.Pane>
+    render: () => <ProfilTakipcileri />
   },
   {
     menuItem: "Takip Edilenler",
-    render: () => <Tab.Pane>Takip edilenler içeriği</Tab.Pane>
+    render: () => <ProfilTakipcileri />
   }
 ];
 
-const ProfilIcerik = () => {
+interface IProps {
+  setAktifTab: (aktifIndex: any) => void;
+}
+
+const ProfilIcerik: React.FC<IProps> = ({ setAktifTab }) => {
   return (
     <Tab
       menu={{ fluid: true, vertical: true }}
       menuPosition="right"
       panes={panes}
+      onTabChange={(e, data) => setAktifTab(data.activeIndex)}
     />
   );
 };

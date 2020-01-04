@@ -6,6 +6,11 @@ interface IProps {
   katilimcilar: IKatilimci[];
 }
 
+const styles = {
+  borderColor: "orange",
+  borderWidth: 2
+};
+
 const EtkinlikListItemKatilimcilar: React.FC<IProps> = ({ katilimcilar }) => {
   return (
     <List horizontal>
@@ -18,6 +23,8 @@ const EtkinlikListItemKatilimcilar: React.FC<IProps> = ({ katilimcilar }) => {
                 size="mini"
                 circular
                 src={katilimci.resim || "/assets/user.png"}
+                bordered
+                style={katilimci.takipEdilen ? styles : null}
               />
             }
           />

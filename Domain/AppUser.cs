@@ -9,5 +9,7 @@ namespace Domain
         public string Bio { get; set; }
         public virtual ICollection<KullaniciEtkinlik> KullaniciEtkinlikler { get; set; }
         public virtual ICollection<Resim> Resimler { get; set; }
+        public virtual ICollection<KullaniciTakibi> TakipEdilenler { get; set; }
+        public virtual ICollection<KullaniciTakibi> Takipciler { get; set; }
     }
 }

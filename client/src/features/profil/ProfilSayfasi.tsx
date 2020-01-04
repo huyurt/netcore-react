@@ -15,7 +15,16 @@ interface IProps extends RouteComponentProps<RouteParams> {}
 
 const ProfilSayfasi: React.FC<IProps> = ({ match }) => {
   const rootStore = useContext(RootStoreContext);
-  const { profilYukleniyor, profil, profilYukle } = rootStore.profilStore;
+  const {
+    profilYukleniyor,
+    profil,
+    profilYukle,
+    takipEt,
+    takibiBirak,
+    isCurrentUser,
+    yukleniyor,
+    setAktifTab
+  } = rootStore.profilStore;
 
   useEffect(() => {
     profilYukle(match.params.userName);
@@ -27,8 +36,14 @@ const ProfilSayfasi: React.FC<IProps> = ({ match }) => {
   return (
     <Grid>
       <Grid.Column width={16}>
-        <ProfilBaslik profil={profil!} />
-        <ProfilIcerik />
+        <ProfilBaslik
+          profil={profil!}
+          isCurrentUser={isCurrentUser}
+          yukleniyor={yukleniyor}
+          takipEt={takipEt}
+          takibiBirak={takibiBirak}
+        />
+        <ProfilIcerik setAktifTab={setAktifTab} />
       </Grid.Column>
     </Grid>
   );

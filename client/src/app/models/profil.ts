@@ -3,6 +3,9 @@ export interface IProfil {
   userName: string;
   bio: string;
   resim: string;
+  takipEdiliyor: boolean;
+  takipciSayisi: number;
+  takipEdilenSayisi: number;
   resimler: IResim[];
 }
 

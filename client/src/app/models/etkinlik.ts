@@ -48,4 +48,5 @@ export interface IKatilimci {
   displayName: string;
   resim: string;
   yayinlandiMi: boolean;
+  takipEdilen?: boolean;
 }

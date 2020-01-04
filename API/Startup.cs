@@ -21,6 +21,7 @@ using AutoMapper;
 using Infrastructure.Resimler;
 using System.Threading.Tasks;
 using API.SignalR;
+using Application.Profiller;
 
 namespace API
 {
@@ -98,6 +99,7 @@ namespace API
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<IKullaniciErisimi, KullaniciErisimi>();
             services.AddScoped<IResimErisimi, ResimErisimi>();
+            services.AddScoped<IProfilReader, ProfilReader>();
             services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
         }
 

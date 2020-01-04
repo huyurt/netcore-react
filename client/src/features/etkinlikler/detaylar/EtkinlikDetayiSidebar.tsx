@@ -41,7 +41,9 @@ const EtkinlikDetayiSidebar: React.FC<IProps> = ({ katilimcilar }) => {
                     {katilimci.displayName}
                   </Link>
                 </Item.Header>
-                <Item.Extra style={{ color: "orange" }}>Following</Item.Extra>
+                {katilimci.takipEdilen && (
+                  <Item.Extra style={{ color: "orange" }}>Following</Item.Extra>
+                )}
               </Item.Content>
             </Item>
           ))}

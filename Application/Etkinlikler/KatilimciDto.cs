@@ -6,5 +6,6 @@ namespace Application.Etkinlikler
         public string DisplayName { get; set; }
         public string Image { get; set; }
         public bool YayinlandiMi { get; set; }
+        public bool TakipEdiliyor { get; set; }
     }
 }

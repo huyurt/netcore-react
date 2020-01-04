@@ -15,6 +15,7 @@ namespace Persistence
         public DbSet<KullaniciEtkinlik> KullaniciEtkinlikler { get; set; }
         public DbSet<Resim> Resimler { get; set; }
         public DbSet<Yorum> Yorumlar { get; set; }
+        public DbSet<KullaniciTakibi> TakipEdilenler { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -39,6 +40,21 @@ namespace Persistence
                 .HasOne(e => e.Etkinlik)
                 .WithMany(k => k.KullaniciEtkinlikler)
                 .HasForeignKey(e => e.EtkinlikId);
+
+            builder.Entity<KullaniciTakibi>(b =>
+            {
+                b.HasKey(k => new { k.GozlemciId, k.HedefId });
+
+                b.HasOne(o => o.Gozlemci)
+                    .WithMany(f => f.TakipEdilenler)
+                    .HasForeignKey(o => o.GozlemciId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(o => o.Hedef)
+                    .WithMany(f => f.Takipciler)
+                    .HasForeignKey(o => o.HedefId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }
